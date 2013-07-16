@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Sainsmograf]]></title>
-  <link href="http://arifwn.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Security | Sainsmograf]]></title>
+  <link href="http://arifwn.github.io/blog/categories/security/atom.xml" rel="self"/>
   <link href="http://arifwn.github.io/"/>
   <updated>2013-07-16T09:10:40+07:00</updated>
   <id>http://arifwn.github.io/</id>
@@ -47,7 +47,7 @@
 <h2>Can We Break The Encryption?</h2>
 
 <ul>
-<li>Recently, there are some unrest in the hacker society (what?) regarding the possibility of non-randomness in some linux distros&#8217; prng (pseudo-random number generator). If it&rsquo;s true, simply knowing the server uptime can increase the odd of successful bruteforcing the encrypted data. Huge deal! (also with some open source drama)</li>
+<li>Recently, there are some unrest in the hacker society (what?) regarding the possibility of non-randomness in some linux distros' prng (pseudo-random number generator). If it&rsquo;s true, simply knowing the server uptime can increase the odd of successful bruteforcing the encrypted data. Huge deal! (also with some open source drama)</li>
 <li>Quantum computing: can it break our decades-long asymmetric-key encryption?</li>
 </ul>
 
@@ -80,15 +80,6 @@
 <li>We need to go <a href="https://www.torproject.org/">deeper</a>.</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Hello World]]></title>
-    <link href="http://arifwn.github.io/blog/2013/07/15/hello-world/"/>
-    <updated>2013-07-15T19:46:00+07:00</updated>
-    <id>http://arifwn.github.io/blog/2013/07/15/hello-world</id>
-    <content type="html"><![CDATA[<p>First Post!</p>
 ]]></content>
   </entry>
   
