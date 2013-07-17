@@ -115,14 +115,23 @@
 
 <p>Well, actually you can use anything that properly encrypt the data. <a href="http://www.7-zip.org/">7-zip</a> support AES encryption (one of the commonly used symmetric-key encryption) too, just like rar. The reason why we didn&rsquo;t encrypt the whole data (presumably we have 1.3GB of it for the example) using the asymmetric-key encryption is it&rsquo;s really slow compared to the symmetric-key encryption. It is much more efficient (and faster) to encrypt the data using symmetric-key encryption and send the key/password through asymmetric-key encryption instead of encrypting the data wholesale using asymmetric-key encryption. Over time, the latest advances in cryptography will make the asymmetric-key encryption as fast as the symmetric-key encryption.</p>
 
+<h2>Can We Break The Encryption?</h2>
+
+<p>Cryptography relies heavily on random number. For example, you don&rsquo;t want your keys to be easily guessable by anyone, you want it sufficiently random that the odds of guessing your so low nobody want to even try to guess it (that&rsquo;s why you should favor randomly generated key over simple memorable string).</p>
+
+<p>But how do we obtain a truly random number from inside a computer? A computer by itself cannot generate a truly random number. A computer is a state machine, so in theory, if you know the machine state at the time the secret random number generated, you might be able to guess that number. So we need another source of randomness to feed the random number generator so it can spit out numbers with more randomness. That source of randomness could be a network interface, human input, or even <a href="http://phys.org/news1147.html">cosmic rays</a>.</p>
+
+<p>Starting from the Ivy Bridge processors, Intel includes an on-chip random number generator along with a new instruction to make uses of it, <a href="http://en.wikipedia.org/wiki/RDRAND">RDRAND</a>. It can generate a random bit for each clock cycle. Modern operating systems use the instruction as additional source of randomness for their built-in random number generator.</p>
+
+<p>There are <a href="https://news.ycombinator.com/item?id=6038473">concerns regarding the use of RDRAND in linux kernel</a>. Since RDRAND uses an on-chip random number generator, somebody at processor manufacturing plant could replace the chip with the one with faulty random number generator, which would potentially compromise security on linux system.</p>
+
+<p>Should we worry that an exploit to random number generator could compromise our security? Probably not, but keep it in mind though.</p>
+
 <p>Break time. I&rsquo;ll continue later (stay tuned)&hellip;</p>
 
 <p>Next:</p>
 
-<h2>Can We Break The Encryption?</h2>
-
 <ul>
-<li>Recently, there are some unrest in the hacker society (what?) regarding the possibility of non-randomness in some linux distros&#8217; prng (pseudo-random number generator). If it&rsquo;s true, simply knowing the server uptime can increase the odd of successful bruteforcing the encrypted data. Huge deal! (also with some open source drama)</li>
 <li>Quantum computing: can it break our decades-long asymmetric-key encryption?</li>
 </ul>
 
