@@ -4,7 +4,7 @@
   <title><![CDATA[Sainsmograf]]></title>
   <link href="http://arifwn.github.io/atom.xml" rel="self"/>
   <link href="http://arifwn.github.io/"/>
-  <updated>2013-07-18T00:19:49+07:00</updated>
+  <updated>2013-07-18T00:23:43+07:00</updated>
   <id>http://arifwn.github.io/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -86,7 +86,7 @@
 
 <p>In asymmetric-key encryption, the public and private keys must be somehow related for the encryption algorithm to work. Therefore, the private keys can be recovered with some forms of factorization from the public key, except doing so is computationally hard, and even virtually impossible (takes too much time, like <em>billions</em> of years) if the key is sufficiently long.</p>
 
-<p>With a sufficiently big quantum computer, factoring private key from public key is feasible using Shor&rsquo;s algorithm. The task that could takes billions of years now can be accomplished in a couple years, for instance. That&rsquo;s why <a href="http://pqcrypto.org/">cryptography researchers now scramble to produce new cryptography algorithms and methods</a> in the event that quantum computing is sufficiently big enough.</p>
+<p>With a sufficiently big quantum computer, factoring private key from public key is feasible using Shor&rsquo;s algorithm. The task that could takes billions of years now can be accomplished in a couple years, for instance. That&rsquo;s why <a href="http://pqcrypto.org/">cryptography researchers now scramble to produce new cryptography algorithms and methods</a> in the event that quantum computer is finally big enough to pose a threat for cryptography world.</p>
 
 <p>Break time. I&rsquo;ll continue later (stay tuned)&hellip;</p>
 
