@@ -4,7 +4,7 @@
   <title><![CDATA[Sainsmograf]]></title>
   <link href="http://arifwn.github.io/atom.xml" rel="self"/>
   <link href="http://arifwn.github.io/"/>
-  <updated>2013-07-17T16:20:00+07:00</updated>
+  <updated>2013-07-18T00:19:49+07:00</updated>
   <id>http://arifwn.github.io/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -20,7 +20,7 @@
     <id>http://arifwn.github.io/blog/2013/07/15/encryption-primer</id>
     <content type="html"><![CDATA[<p>The uproar caused by recent leak from <a href="https://en.wikipedia.org/wiki/Edward_Snowden">Edward Snowden</a> still hasn&rsquo;t receded yet. There are various stances about privacy and government snooping floating around in the internet. Some say they have <a href="https://twitter.com/_nothingtohide">nothing to hide</a>. Others argue if the government can snoop you, and black-hat hackers can snoop the government, then we&rsquo;re royally screwed because anybody with money can pay the black-hats (or, gasp!, pay some corrupt government officials) to get data about anybody.</p>
 
-<p>Politics aside, security must be taken seriously every time we use internet. In this post I would like to talk about the basic of security in general computing today.</p>
+<p>Politics aside, security must be taken seriously everytime we use internet. In this post I would like to talk about the basic of security in general computing today.</p>
 
 <h2>Basic Cryptography</h2>
 
@@ -28,9 +28,13 @@
 
 <p>Based on the keys used for the encryption, there are two type of encryption: symmetric-key and asymmetric-key encryption.</p>
 
+<h3>Symmetric-Key Encryption</h3>
+
 <p>In symmetric-key encryption, the key that uses to encrypt the plaintext into cyphertext can be used to reverse the operation. Decrypting the resulting cyphertext using the same key will yield the same plain text. So, if two people can share an encryption key, they can communicate securely using that key. A simple example is sharing an encrypted rar file with your partner, your partner must know your encryption key (the password) in order to decrypt the rar file. So, you can go meet your partner and tell him your password.</p>
 
 <p>What if it&rsquo;s impossible for you to meet your partner physically?  Supposedly, the secrecy of the data you want to transmit is very important and the balance of the world would be disrupted if it compromised. How can you tell him your password with a strong guarantee that nobody snoop it in between the transit? Using email? Email is generally transmitted in plain text, anybody in the network between you and your partner can read it. Using google chat? Then google can read it whenever it please. Using text message? Then the cellphone operator can read it. Also, <a href="http://arstechnica.com/gadgets/2010/12/15-phone-3-minutes-all-thats-needed-to-eavesdrop-on-gsm-call/">gsm security is considered broken</a> and anyone with the right equipment can intercept your message. It&rsquo;s time to use an asymmetric-key encryption.</p>
+
+<h3>Asymmetric-Key Encryption</h3>
 
 <p>In asymmetric-key encryption, you have two keys instead of one: the private keys (which you should guard with your life) and the public key (which you should share to anyone and their pets). So, why does it require two keys?</p>
 
@@ -42,6 +46,8 @@
 
 <h2>Can We Break The Encryption?</h2>
 
+<h3>Random Number Generator</h3>
+
 <p>Cryptography relies heavily on random number. For example, you don&rsquo;t want your keys to be easily guessable by anyone, you want it sufficiently random that the odds of successfully guessing your key is so low nobody even try to guess it (that&rsquo;s why you should favor randomly generated key over simple memorable string).</p>
 
 <p>But how do we obtain a truly random number from inside a computer? A computer by itself cannot generate a truly random number. A computer is a state machine, so in theory, if you know the machine state at the time the secret random number generated, you might be able to guess that number. So we need another source of randomness to feed the random number generator so it can spit out numbers with more randomness. That source of randomness could be a network interface, human input, or even <a href="http://phys.org/news1147.html">cosmic rays</a>.</p>
@@ -52,14 +58,39 @@
 
 <p>Should we worry that an exploit to random number generator could compromise our security? Probably not, but keep it in mind though.</p>
 
+<h3>Quantum Computing</h3>
+
+<p><a href="http://www.mat.ucm.es/catedramdeguzman/old/01historias/haciaelfuturo/Burgos090900/quantumcomputingSciAmer/0698gershenfeld.html">Quantum computing</a> has gain a lot of buzz recently, especially those <a href="http://en.wikipedia.org/wiki/D-Wave_Systems">D-Wave</a> stuff. But what is quantum computing and what is the implication for our daily (internet) life?</p>
+
+<h4>Quantum Superposition</h4>
+
+<p>Remember Schrödinger cat? It&rsquo;s often used to illustrate quantum superposition. The cat is in the box, with poison and radioactive trigger that have 50/50 chance of releasing the poison to the poor cat. In the end, is the cat alive or dead? Not that simple. The poor cat is in a superposition of state and both alive and dead. The moment we take a peek to see how the poor cat&rsquo;s doing, the quantum superposition collapsed and the cat falls into one of the two possible state: alive or dead.</p>
+
+<p>That cat analogy doesn&rsquo;t make any sense, right? How could the cat both alive and dead at the same time before we take a look at it? But it highlights an important feature of quantum superposition: the quantum superposition state collapse into in one of the possible states the moment we measure it.</p>
+
+<h4>Qubit</h4>
+
+<p>Ok, the quantum superposition is neat because it can represent multiple states simultaneously. But what&rsquo;s that got to do with quantum computing?</p>
+
+<p>The building block of traditional computing, as we all know very well, is <em>bit</em>. A bit can represent two states: either 1 or 0. In quantum computing, the building block is <em>qubit</em> (quantum bit). Because qubit has quantum superposition property, it can be in multiple states at the same time; it can contain both 1 and 0 until the moment you try to measure it, at which point it would collapse into either 1 or 0. This is indeed truly mind blowing.</p>
+
+<p>Each qubit can have both 0 and 1 simultaneously, and each state has its own probability coefficient. To describe a qubit, we would need two numbers to store probability coefficients for 0 and 1. To describe two qubits, we would need 4 numbers, and so on in n<sup>2</sup> relation. This illustrates the strength of quantum computer: we would need a traditional computer capable to store 2<sup>100</sup> numbers to represent a 100 qubits quantum computer. That means we need millions of <a href="http://en.wikipedia.org/wiki/Yotta-">yottabyte</a> just to represent a mere 100 qubits quantum computer!</p>
+
+<h4>Quantum Teleportation</h4>
+
+<p>Another bizzare phenomenon is quantum teleportation. After a pair of particles interact with each other and separated, if one particle has its state changed, the other would have its state changed too, no matter what distance they are separated. It is as if the particles can sense what happen to its pal and react accordingly, just like in horror movies.</p>
+
+<p>Again, what&rsquo;s that got to do with quantum computing?</p>
+
+<p>In 1994, a researcher from AT&amp;T, Peter W. Shor found a way to use quantum teleportation to find prime factors of an integer. It turns out to be much faster than any traditional computer can compute. It is now known as <a href="http://en.wikipedia.org/wiki/Shor's_algorithm">Shor&rsquo;s Algorithm</a>.</p>
+
+<p>In asymmetric-key encryption, the public and private keys must be somehow related for the encryption algorithm to work. Therefore, the private keys can be recovered with some forms of factorization from the public key, except doing so is computationally hard, and even virtually impossible (takes too much time, like <em>billions</em> of years) if the key is sufficiently long.</p>
+
+<p>With a sufficiently big quantum computer, factoring private key from public key is feasible using Shor&rsquo;s algorithm. The task that could takes billions of years now can be accomplished in a couple years, for instance. That&rsquo;s why <a href="http://pqcrypto.org/">cryptography researchers now scramble to produce new cryptography algorithms and methods</a> in the event that quantum computing is sufficiently big enough.</p>
+
 <p>Break time. I&rsquo;ll continue later (stay tuned)&hellip;</p>
 
 <p>Next:</p>
-
-<ul>
-<li>Quantum computing: can it break our decades-long asymmetric-key encryption?</li>
-</ul>
-
 
 <h2>Securing Email</h2>
 
