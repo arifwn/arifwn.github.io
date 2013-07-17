@@ -120,7 +120,7 @@
 
 <h2>Can We Break The Encryption?</h2>
 
-<p>Cryptography relies heavily on random number. For example, you don&rsquo;t want your keys to be easily guessable by anyone, you want it sufficiently random that the odds of guessing your so low nobody even try to guess it (that&rsquo;s why you should favor randomly generated key over simple memorable string).</p>
+<p>Cryptography relies heavily on random number. For example, you don&rsquo;t want your keys to be easily guessable by anyone, you want it sufficiently random that the odds of successfully guessing your key is so low nobody even try to guess it (that&rsquo;s why you should favor randomly generated key over simple memorable string).</p>
 
 <p>But how do we obtain a truly random number from inside a computer? A computer by itself cannot generate a truly random number. A computer is a state machine, so in theory, if you know the machine state at the time the secret random number generated, you might be able to guess that number. So we need another source of randomness to feed the random number generator so it can spit out numbers with more randomness. That source of randomness could be a network interface, human input, or even <a href="http://phys.org/news1147.html">cosmic rays</a>.</p>
 
