@@ -163,13 +163,363 @@
 
 <p>With a sufficiently big quantum computer, factoring private key from public key is feasible using Shor&rsquo;s algorithm. The task that could takes billions of years now can be accomplished in a couple years, for instance. That&rsquo;s why <a href="http://pqcrypto.org/">cryptography researchers now scramble to produce new cryptography algorithms and methods</a> in the event that quantum computer is finally big enough to pose a threat for cryptography world.</p>
 
-<p>Break time. I&rsquo;ll continue later (stay tuned)&hellip;</p>
-
-<p>Next:</p>
-
 <h2>Securing Email</h2>
 
-<p>Emails are generally transmitted as plain-text. However, there are many ways to secure them. The question is, can it be done easily?</p>
+<p>There is no doubt that email plays an important role in our internet life. We can&rsquo;t even register for a new account on many website without email! But how does email really work actually?</p>
+
+<h3>Simple Mail Transfer Protocol</h3>
+
+<p>The protocol used by email servers exchange email to each other. In fact, OSX and most linux distibutions ship with <code>sendmail</code>, an email transport agent. If you&rsquo;re on a Mac or Linux, open a terminal and type the following code to send yourself an email (replace my email address with yours):</p>
+
+<figure class='code'><figcaption><span>Send an email from command line interface using unix sendmail</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sendmail arif@sainsmograf.com <span class="s">&lt;&lt; EOF</span>
+</span><span class='line'><span class="s">Hello, just a test email from command line!</span>
+</span><span class='line'><span class="s">EOF</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#x61;&#x72;&#x69;&#x66;&#64;&#x61;&#x72;&#105;&#x66;&#115;&#45;&#109;&#97;&#99;&#x62;&#x6f;&#x6f;&#x6b;&#x2d;&#x70;&#114;&#x6f;&#x2e;&#x6c;&#x6f;&#99;&#97;&#108;">&#97;&#x72;&#105;&#x66;&#x40;&#x61;&#114;&#x69;&#102;&#115;&#x2d;&#109;&#97;&#x63;&#98;&#111;&#111;&#x6b;&#x2d;&#x70;&#114;&#111;&#x2e;&#108;&#111;&#99;&#97;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
+
+<ul>
+<li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
+<li>Your email provider (gmail, yahoo, etc) ban your ip range (possibly due to spambots, damn spambots!)</li>
+</ul>
+
+
+<h3>Can Somebody Snoop My Email?</h3>
+
+<p>By default, <code>sendmail</code> uses unencrypted protocol. The email sent using the <code>sendmail</code> command in the previous section is not encrypted, and anybody between you and your destination server can easily read your email. The good news is, sendmail does support SSL and can encrypt your email messages when transmitting it to the destination server. However, sendmail&rsquo;s SSL encryption won&rsquo;t protect your email if the recipient access his mailbox via unencrypted connection (for example, plain old POP3 without SSL).</p>
+
+<p>You may need to encrypt your email message yourself to guarantee that nobody snoop your email, but how?</p>
+
+<h3>Pretty Good Privacy (PGP)</h3>
+
+<p>A popular way to encrypt your email messages is using PGP. A widely used implementation of PGP is GNU Privacy Guard (GnuPG, or GPG). If somebody asks you to use PGP/GPG, don&rsquo;t be confused. What he means is you should use GnuPG to exchange PGP-encrypted message with him.</p>
+
+<p>After getting GPG installed, lets use it to encrypt our email!</p>
+
+<h4>Generate Private/Public Keys Pair</h4>
+
+<p>PGP uses asymmetric encryption (discussed above), so the first logical step to encrypt your email is generating your public and private keys. Run the following command from your terminal to generate your keys pair:</p>
+
+<figure class='code'><figcaption><span>Generate Private/Public Keys Pair</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gpg --gen-key
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You&rsquo;ll see the following output:</p>
+
+<figure class='code'><figcaption><span>Generate Private/Public Keys Pair</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pg <span class="o">(</span>GnuPG<span class="o">)</span> 1.4.13; Copyright <span class="o">(</span>C<span class="o">)</span> 2012 Free Software Foundation, Inc.
+</span><span class='line'>This is free software: you are free to change and redistribute it.
+</span><span class='line'>There is NO WARRANTY, to the extent permitted by law.
+</span><span class='line'>
+</span><span class='line'>Please <span class="k">select </span>what kind of key you want:
+</span><span class='line'>   <span class="o">(</span>1<span class="o">)</span> RSA and RSA <span class="o">(</span>default<span class="o">)</span>
+</span><span class='line'>   <span class="o">(</span>2<span class="o">)</span> DSA and Elgamal
+</span><span class='line'>   <span class="o">(</span>3<span class="o">)</span> DSA <span class="o">(</span>sign only<span class="o">)</span>
+</span><span class='line'>   <span class="o">(</span>4<span class="o">)</span> RSA <span class="o">(</span>sign only<span class="o">)</span>
+</span><span class='line'>Your selection?
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Select the default by entering <code>1</code>. You&rsquo;ll be prompted another questions. Just answer them accordingly. Eventually, GPG will ask you to create a passphrase:</p>
+
+<figure class='code'><figcaption><span>Generate Private/Public Keys Pair</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gpg <span class="o">(</span>GnuPG<span class="o">)</span> 1.4.13; Copyright <span class="o">(</span>C<span class="o">)</span> 2012 Free Software Foundation, Inc.
+</span><span class='line'>This is free software: you are free to change and redistribute it.
+</span><span class='line'>There is NO WARRANTY, to the extent permitted by law.
+</span><span class='line'>
+</span><span class='line'>Please <span class="k">select </span>what kind of key you want:
+</span><span class='line'>   <span class="o">(</span>1<span class="o">)</span> RSA and RSA <span class="o">(</span>default<span class="o">)</span>
+</span><span class='line'>   <span class="o">(</span>2<span class="o">)</span> DSA and Elgamal
+</span><span class='line'>   <span class="o">(</span>3<span class="o">)</span> DSA <span class="o">(</span>sign only<span class="o">)</span>
+</span><span class='line'>   <span class="o">(</span>4<span class="o">)</span> RSA <span class="o">(</span>sign only<span class="o">)</span>
+</span><span class='line'>Your selection? 1
+</span><span class='line'>RSA keys may be between 1024 and 4096 bits long.
+</span><span class='line'>What keysize <span class="k">do </span>you want? <span class="o">(</span>2048<span class="o">)</span> 4096
+</span><span class='line'>Requested keysize is 4096 bits
+</span><span class='line'>Please specify how long the key should be valid.
+</span><span class='line'>         <span class="nv">0</span> <span class="o">=</span> key does not expire
+</span><span class='line'>      &lt;n&gt;  <span class="o">=</span> key expires in n days
+</span><span class='line'>      &lt;n&gt;w <span class="o">=</span> key expires in n weeks
+</span><span class='line'>      &lt;n&gt;m <span class="o">=</span> key expires in n months
+</span><span class='line'>      &lt;n&gt;y <span class="o">=</span> key expires in n years
+</span><span class='line'>Key is valid <span class="k">for</span>? <span class="o">(</span>0<span class="o">)</span>
+</span><span class='line'>Key does not expire at all
+</span><span class='line'>Is this correct? <span class="o">(</span>y/N<span class="o">)</span> y
+</span><span class='line'>
+</span><span class='line'>You need a user ID to identify your key; the software constructs the user ID
+</span><span class='line'>from the Real Name, Comment and Email Address in this form:
+</span><span class='line'>    <span class="s2">&quot;Heinrich Heine (Der Dichter) &lt;heinrichh@duesseldorf.de&gt;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>Real name: Arif Widi Nugroho
+</span><span class='line'>Email address: arif@sainsmograf.com
+</span><span class='line'>Comment:
+</span><span class='line'>You selected this USER-ID:
+</span><span class='line'>    <span class="s2">&quot;Arif Widi Nugroho &lt;arif@sainsmograf.com&gt;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>Change <span class="o">(</span>N<span class="o">)</span>ame, <span class="o">(</span>C<span class="o">)</span>omment, <span class="o">(</span>E<span class="o">)</span>mail or <span class="o">(</span>O<span class="o">)</span>kay/<span class="o">(</span>Q<span class="o">)</span>uit? o
+</span><span class='line'>You need a Passphrase to protect your secret key.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, enter a long passphrass, but don&rsquo;t forget it! If you forgot your passphrase, there is no way to recover it and you can never decrypt all messages that has been encrypted with your pulic key.</p>
+
+<p>Now that you have your own private and public keys, you should share your public key to everyone! To print your public key, use this command (replace my email address with yours):</p>
+
+<figure class='code'><figcaption><span>Print PGP Public Key</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gpg -a --export arif@sainsmograf.com
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And the result:</p>
+
+<figure class='code'><figcaption><span>Print PGP Public Key</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>-----BEGIN PGP PUBLIC KEY BLOCK-----
+</span><span class='line'>Version: GnuPG v1.4.13 <span class="o">(</span>Darwin<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>mQINBFHw6YUBEAC0hmxW63ESb+YwatEVTeSOTkHjYp7G2S2gjmItVOuZ+N8us59N
+</span><span class='line'>uMH1M1g71GNcztYIXzQIoKITiLxLfP0+mPf0j2vzuoYY9AAsQgsr0fYPTDvJUz2c
+</span><span class='line'>xseZ0BROm2wfGF3U54bGroQOCqXMQXV/5ln45ie/NqzZRWmF4xpKJ4dPN1GXFphz
+</span><span class='line'>SKw5uQkFC5JcmoPCzU7xsEdLspSNhL98a1rvLD0QVXMxVGM/NSkhJYaYidChdsiM
+</span><span class='line'>UMQ9AWge6PSDE/A9ZnZC+BvInYzJ3MoYHOcZxGk1fttUY1JKQvLCodSuCt9MKD+7
+</span><span class='line'>gnXOea4a2VaEQE3rfsa9CuGVz/r1o54hOnYMzNex3z3VaZX1hAV6pmwfl/CKVggY
+</span><span class='line'>R401xJDYAUjmWGSeheqfon9rdw9hDitleaekq0j0wfpJ+EoMEohVsDKrf8TvcRrO
+</span><span class='line'>IYt1CAjjI/cqbuIm3bfr8T6wT59H879ss3v0ibNmD4mf9/+IR23Xj/g1nA6aMjX3
+</span><span class='line'>62psBNOvFB6pP59GMtDD93Zze6FMBzPRGqsB0YR6Gp3gkdpFBFHgj3vwaYC+bWJ8
+</span><span class='line'>LmYJrPTivVEAWZ4I2tRyrkdJzIiRlNnAXCmJTcaMhkASfnjgNJWloGDk/o1SqOhe
+</span><span class='line'>F9w2M9iGY/xdz5j1gRkdDSvPr7AGC5r4Vb26ZNdszZ7ZRF5gekF5k21dZQARAQAB
+</span><span class='line'>tChBcmlmIFdpZGkgTnVncm9obyA8YXJpZkBzYWluc21vZ3JhZi5jb20+iQI4BBMB
+</span><span class='line'>AgAiBQJR8OmFAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBmmK8D5X4F
+</span><span class='line'>BzsyD/9NbYNxz93oW1ujMY3z/er6zhohQqOE5Wl8H4lEz5X/l/8iACM/n5n9RNEF
+</span><span class='line'>eAeXbQQFk5+szaE4njK5gGVVUN+WGQ1zH1Hd0NY/6/d/N1vhQiYYg4VeeGvcFBAS
+</span><span class='line'>+CuNs4YOa7nM4YUrSKXGQ8pARakICmw03LYhbhCgcIGuRInoLoWnGCqi+OOjBcli
+</span><span class='line'>MAEG/7Rb2aNWyjKw/Oyj4X7y3O0MP5nv0a9MHPum5HEbiW6O7ElM6UWHP3pO7rpW
+</span><span class='line'>i301yoo8nej1IClmpF+ufH/+vveyG6UNpnzTGj3h+G8t6P6bPeq4vMKIxrskcxGt
+</span><span class='line'>HhJfk1EQdHUfZMDYTSHjanCbyMYSo5fbjVVCnJrqO4nHUp9ngbMZMBgi2uROFG8H
+</span><span class='line'>3/dKt7cQdd0VFvmUntS2A93M0G7mwwYV2O37jOkVTi1F5Br9anLcnb3FE5CXfqxr
+</span><span class='line'>8Fd77Pjhv/sGOIAkxqdldc+grL5OJp76DChWS41cMaZ46BUfN3JgDh8rSqA/A5v+
+</span><span class='line'>RkIKpSWYPx6K4EOfGfnr6WnL1oJdcLjIgSab093+7qDYWv2/3B2BsoOTOX5MuZZi
+</span><span class='line'>ELcniDJFYSW8aW6TbiKP1x8BkXPynxh9fErz27ciLPx2xtzQEEbiMXjAhvyuRH2o
+</span><span class='line'>AJJ2ogzGtOlPwZBvLRDIHDznvxaMx8agp5uyX1+j0SFgpuguHbkCDQRR8OmFARAA
+</span><span class='line'>18sCfZrkTLJs2wYgDkVU49pnlKcpZXl4yyoKKZ/AuHBkd1tFQGwCDMFefpxeECKC
+</span><span class='line'>6aonQoGrVNIOvR4n2bBdePEvkmQ1Y5xVvfOoPWTdgg6rUqpdpU/vV5b5BNrU63n+
+</span><span class='line'>CRdODLdMg67Av7diZlp15PcjiKkkyQ2VTfTgDgWiSyYnKyvZoNnI4mMopEtl3tjh
+</span><span class='line'>Vze4TuGI/7UJdh06Gh8AW2WB0wJjr6d0zFsKjQWE5pJELxVBy+E3IO2KpIjLZp2P
+</span><span class='line'>N7AWZOpw4CbjFV9pQMaGe6bDPPtnk9D95WQt1AzWkuOA+kMuwlyc5zTutxatDXqt
+</span><span class='line'>yfILGESi+l4VkGVJq3wnVDPkjCXsIPk7OJ83GCh28PfPz+o7DM2gNQ0bsP/A2d1w
+</span><span class='line'>9Lwhsb1tTjWtVGxP38a/lbTRfbHx+Zy7ZX4INS7R2rbQZmW4Lv59Y6FSFRE3zlII
+</span><span class='line'>lOEGW2Wm19S7ORl3ISLRENqYI9b/J/wA0AT1I1vOzTjsHXzZPAs2poHkb7XU8KEX
+</span><span class='line'>Rzn0PKpRj4lvxZWpMMNpU17JIwrymb3z64WZBjU1R7hErneSDuVsQj9aT590MVNV
+</span><span class='line'>Jupggd/Brs+xeivV6T7wRaMYQWI5TAUenjmy5Q4LxhiLQySpxGvuvx/bxaS1zg3E
+</span><span class='line'>nKyvtJzKcWOLzT0V7gLFRKoQ9jIwkl+hpJNVnpTEncsAEQEAAYkCHwQYAQIACQUC
+</span><span class='line'>UfDphQIbDAAKCRBmmK8D5X4FB5eiD/4w60Ag7zkZQbnfPyKuxZrejYl2YiLuHlTT
+</span><span class='line'>1UdsP6BsyQ4iysOEloW0Vq06tjKj5ahIvRUo5UF2h4ehOnUNbXTFgPegiCEaG0m9
+</span><span class='line'>hEvIE9ZWsJqkgUfC5Inq+066AQMJa0PeA8kaSxc5FriMiq7UWuT4ungN8KlqKhaS
+</span><span class='line'>Vw5LM5kHEfn0WzHbnvPcq39eAUjkEbVjbN1V5LfDOrV3HM8VKe4OWvSpD1h5tawW
+</span><span class='line'>mfUc3jND2RfkiH/r8dY0j5SjggdXAqK14DJL339+Y/r0SpclP7owwBo4xpNabqkF
+</span><span class='line'>8D+nwA4hIhgw0XV2BE2MbCe0QIij2S+08/YAoW8X0FKxsQY8UbHHKsIZdFh2jr3Z
+</span><span class='line'>SQekkpZqHKUC9CzmBEb5gg434A4NTUdeg9EURg1tBulED66q8NxPQgUU5Qu0ggSZ
+</span><span class='line'>hqhth5Cr5WQKxrGJ2x3+0MEmJbL2TKutBSk0qU9gau5sKesCRK8/l6Uxax8NDPZd
+</span><span class='line'>O/sirv7X3uL0FN6jnxSMrA/Qj9Vn5QkV+BFdMdOQ0xDdWrZZRoWgWoiNFRVraILM
+</span><span class='line'>FXSLslU/Zns4Qu1oEhpvzzT5wW5xkbPhaY+XuQ4Qfl+y/mcHCdQFPfwh+Y81n/Di
+</span><span class='line'>uMvB7IUohi8q5z0XUqoyMkP1MccMq4qzoMcSJzHAx3Nju/aBNzS03CTFXDVYIO0g
+</span><span class='line'><span class="nv">TN4ixRhleA</span><span class="o">==</span>
+</span><span class='line'><span class="o">=</span>dEg9
+</span><span class='line'>-----END PGP PUBLIC KEY BLOCK-----
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>There, you have my public key. Save that key into a file called <code>public.key</code> and import that public key using the following command:</p>
+
+<figure class='code'><figcaption><span>Importing a Public Key</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gpg --import public.key
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now it&rsquo;s time to send myself a secret email! To encrypt a message, first, save the message inside a file called <code>plain.txt</code>. Encrypt the file using the following command:</p>
+
+<figure class='code'><figcaption><span>Encrypt a Message</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gpg -a -e -u sender@example.com -r recipient@example.com plain.txt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Replace <code>sender@example.com</code> with your email message and <code>recipient@example.com</code> with your recipient. Make sure to import your recipient&rsquo;s public key first!</p>
+
+<p>The encrypted message would be stored inside <code>plain.txt.asc</code> file:</p>
+
+<figure class='code'><figcaption><span>Encrypt a Message</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>-----BEGIN PGP MESSAGE-----
+</span><span class='line'>Version: GnuPG v1.4.13 <span class="o">(</span>Darwin<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>hQIMA1wNV+AyV/2aAQ/8Dzd4h2MnY/ZNH2HO4aUUTGbgZfLWrWg1VJOKeldXw5GY
+</span><span class='line'>5FkAuywDfCMha9/GH3UHh9vLYjmCHsjf4BeMgA5Z5Z3Hzwp/+kI0Nv+N07L5+UVG
+</span><span class='line'>qIdXKjKuc/lBgB5NOrz8Q+7SSBbvQgKgywravwDxtzt/lhCI0J5SjUo9X8ehuH4q
+</span><span class='line'>qDB+yZtrGYKdw1Ww4JIgRhV+Lsbjt2jhB2s62RirotyX6sKKVn0EfATcdNKBOuWW
+</span><span class='line'>F6pLP7h0AqW0PCq3HGG8hnGeIu7Kef5xCIuJQCb7rgs0TP09NAP5fugMK5I74S2P
+</span><span class='line'>DYrQh66mGDrelud3jFq1vKguqOOSrEw5SEnRSG3TeUbjHPxMenvVYkxwhL7p0sK0
+</span><span class='line'>1il3s7PMrDuqFEu7SrTRUDUTgbJtrV0hgJKWi0x/6SFKOzodvW8ka5MzIpqKj3KC
+</span><span class='line'>jf48s4xfd67uofol79cUuVr4zwWbe6RpDEmRt1JS3hxXTWa0dQN2WNCic0OFRXHt
+</span><span class='line'>UQGKJoV2I1U2nEc2DjZNca4f9zuPvjyxCT8gp11E6HJ31WRbln5qixF7W3RA148x
+</span><span class='line'>3SC7ThZp687bMGxUTUQimpy4FkrWtvQzYfoILAlJbmFiOUB1ww6q8fWMf3mV4e1n
+</span><span class='line'>h1K2bpb4Syu2eeflgUxNdeLfjBmNJgMIGgsHMRspTAVqHo+KJzb1JanvuyVPCcPS
+</span><span class='line'>XAGb2WhILc/NRNKodV8LZsqBK6nxCCQM+3mooLUl5KoccG5VVealdf5epN7sbnjg
+</span><span class='line'>QlH+2rQjLwGGZH76bDBNhblC2M8tAUxU3BNUd/ax9EspN16IpHgWXNGNvUyh
+</span><span class='line'><span class="o">=</span>rJyP
+</span><span class='line'>-----END PGP MESSAGE-----
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now send that file via email to your recipient. Here is how to send the encrypted message using <code>sendmail</code>:</p>
+
+<figure class='code'><figcaption><span>Send The Encrypted Message Using Sendmail</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cat plain.txt.asc | sendmail arif@sainsmograf.com
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://lh6.googleusercontent.com/-OX554vlxHAA/UfD3nvJBfSI/AAAAAAAAACw/nRf9kju8m8c/d/Screen+Shot+2013-07-25+at+5.01.40+PM.png" title="An Encrypted Email!" ></p>
+
+<p>To decrypt the message, save the message content into a file called <code>cipher.txt</code> and run:</p>
+
+<figure class='code'><figcaption><span>Decrypting a PGP Message</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gpg -d cipher.txt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It would print out the decrypted message:</p>
+
+<figure class='code'><figcaption><span>Decrypting a PGP Message</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gpg: encrypted with 4096-bit RSA key, ID 3257FD9A, created 2013-07-25
+</span><span class='line'>      <span class="s2">&quot;Arif Widi Nugroho &lt;arif@sainsmograf.com&gt;&quot;</span>
+</span><span class='line'>This is a secret email!
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can encrypt binary data too, or use it to encrypt your off-site backup data. Check the man page (<code>man gpg</code>) or consult the following resource:</p>
+
+<ul>
+<li><a href="http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/">GPG Cheat Sheet</a></li>
+<li><a href="http://www.robertsosinski.com/2008/02/18/working-with-pgp-and-mac-os-x/">Working with PGP and Mac OS X</a></li>
+</ul>
+
+
+<p>Next:</p>
 
 <h2>Verifying Website Security</h2>
 
