@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Security | Sainsmograf]]></title>
   <link href="http://arifwn.github.io/blog/categories/security/atom.xml" rel="self"/>
   <link href="http://arifwn.github.io/"/>
-  <updated>2013-07-25T17:14:30+07:00</updated>
+  <updated>2013-07-26T02:15:50+07:00</updated>
   <id>http://arifwn.github.io/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -94,15 +94,15 @@
 
 <h3>Simple Mail Transfer Protocol</h3>
 
-<p>The protocol used by email servers exchange email to each other. In fact, OSX and most linux distibutions ship with <code>sendmail</code>, an email transport agent. If you&rsquo;re on a Mac or Linux, open a terminal and type the following code to send yourself an email (replace my email address with yours):</p>
+<p>The SMTP (Simple Mail Transfer Protocol) is used by email servers to exchange emails to each other. In fact, OSX and most linux distributions ship with <code>sendmail</code>, an email transport agent. If you&rsquo;re on a Mac or Linux, open a terminal and type the following code to send yourself an email (replace my email address with yours):</p>
 
-<p><code>bash Send an email from command line interface using unix sendmail
+<p><code>bash Sending an Email From Command Line Interface Using Unix Sendmail
 sendmail arif@sainsmograf.com &lt;&lt; EOF
 Hello, just a test email from command line!
 EOF
 </code></p>
 
-<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#58;&#x61;&#114;&#105;&#x66;&#x40;&#97;&#x72;&#x69;&#102;&#115;&#45;&#109;&#x61;&#99;&#98;&#x6f;&#111;&#x6b;&#45;&#112;&#114;&#111;&#46;&#108;&#111;&#99;&#x61;&#108;">&#x61;&#x72;&#105;&#102;&#x40;&#97;&#114;&#105;&#102;&#x73;&#45;&#x6d;&#x61;&#99;&#x62;&#x6f;&#111;&#x6b;&#45;&#x70;&#x72;&#111;&#x2e;&#x6c;&#111;&#x63;&#x61;&#108;</a>). If the command run successfully but you never receive any email, chance that:</p>
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#97;&#x69;&#x6c;&#116;&#x6f;&#58;&#97;&#114;&#x69;&#102;&#64;&#97;&#114;&#105;&#102;&#x73;&#45;&#x6d;&#97;&#99;&#x62;&#x6f;&#111;&#x6b;&#x2d;&#112;&#114;&#111;&#46;&#108;&#111;&#99;&#x61;&#x6c;">&#97;&#x72;&#105;&#x66;&#x40;&#x61;&#x72;&#105;&#102;&#115;&#45;&#109;&#x61;&#99;&#x62;&#x6f;&#x6f;&#107;&#45;&#x70;&#x72;&#x6f;&#46;&#x6c;&#x6f;&#99;&#x61;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
 
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
@@ -110,15 +110,19 @@ EOF
 </ul>
 
 
+<p>If you did receive the email, you might not be able to reply to it unless you have configured your hostname properly.</p>
+
+<p>In the above example, my computer act as an email server and communicate directly to sainsmograf.com&rsquo;s mail server. Note the <em>email server</em> part. If you&rsquo;re using Outlook or Thunderbird to connect to smtp server, your computer act as a <em>user</em> of that server. Here, <code>sendmail</code> act as an email server delivering email from its user (me) to another email server (sainsmograf.com).</p>
+
 <h3>Can Somebody Snoop My Email?</h3>
 
-<p>By default, <code>sendmail</code> uses unencrypted protocol. The email sent using the <code>sendmail</code> command in the previous section is not encrypted, and anybody between you and your destination server can easily read your email. The good news is, sendmail does support SSL and can encrypt your email messages when transmitting it to the destination server. However, sendmail&rsquo;s SSL encryption won&rsquo;t protect your email if the recipient access his mailbox via unencrypted connection (for example, plain old POP3 without SSL).</p>
+<p>By default, <code>sendmail</code> uses unencrypted protocol. The email sent using the <code>sendmail</code> command in the previous section is not encrypted, and anybody between you and your destination server can easily read your email. The good news is, sendmail does support SSL and can encrypt your email messages during transmission. However, sendmail&rsquo;s SSL encryption won&rsquo;t protect your email if the recipient access his mailbox via unencrypted connection (for example, plain old POP3 without SSL).</p>
 
 <p>You may need to encrypt your email message yourself to guarantee that nobody snoop your email, but how?</p>
 
 <h3>Pretty Good Privacy (PGP)</h3>
 
-<p>A popular way to encrypt your email messages is using PGP. A widely used implementation of PGP is GNU Privacy Guard (GnuPG, or GPG). If somebody asks you to use PGP/GPG, don&rsquo;t be confused. What he means is you should use GnuPG to exchange PGP-encrypted message with him.</p>
+<p>A popular way to encrypt your email messages is using PGP. A widely used implementation of PGP is GNU Privacy Guard (GnuPG, or GPG). <a href="http://www.wired.com/threatlevel/2013/06/signed-bda0df3c/">If somebody asks you to use PGP/GPG</a>, don&rsquo;t be confused. What he means is you should use GnuPG to exchange PGP-encrypted message with him.</p>
 
 <p>After getting GPG installed, lets use it to encrypt our email!</p>
 
@@ -132,8 +136,8 @@ gpg --gen-key
 
 <p>You&rsquo;ll see the following output:</p>
 
-<p>```
-pg (GnuPG) 1.4.13; Copyright &copy; 2012 Free Software Foundation, Inc.
+<p>``` text GPG Output
+gpg (GnuPG) 1.4.13; Copyright &copy; 2012 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.</p>
 
@@ -147,7 +151,7 @@ Your selection?
 
 <p>Select the default by entering <code>1</code>. You&rsquo;ll be prompted another questions. Just answer them accordingly. Eventually, GPG will ask you to create a passphrase:</p>
 
-<p>```
+<p>``` text GPG Output
 gpg (GnuPG) 1.4.13; Copyright &copy; 2012 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.</p>
@@ -181,7 +185,7 @@ from the Real Name, Comment and Email Address in this form:</p>
 </code></pre>
 
 <p>Real name: Arif Widi Nugroho
-Email address: <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#111;&#x3a;&#x61;&#114;&#x69;&#x66;&#x40;&#x73;&#x61;&#105;&#110;&#115;&#x6d;&#x6f;&#103;&#114;&#97;&#x66;&#x2e;&#99;&#x6f;&#109;">&#x61;&#114;&#105;&#x66;&#64;&#115;&#97;&#x69;&#110;&#115;&#109;&#x6f;&#x67;&#114;&#97;&#102;&#x2e;&#99;&#111;&#x6d;</a>
+Email address: <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#x6f;&#58;&#x61;&#114;&#x69;&#x66;&#64;&#x73;&#97;&#105;&#x6e;&#115;&#x6d;&#111;&#x67;&#114;&#x61;&#x66;&#x2e;&#99;&#x6f;&#x6d;">&#97;&#x72;&#105;&#x66;&#x40;&#x73;&#97;&#105;&#x6e;&#x73;&#109;&#x6f;&#103;&#114;&#97;&#102;&#x2e;&#99;&#x6f;&#109;</a>
 Comment:
 You selected this USER-ID:</p>
 
@@ -192,7 +196,7 @@ You selected this USER-ID:</p>
 You need a Passphrase to protect your secret key.
 ```</p>
 
-<p>Now, enter a long passphrass, but don&rsquo;t forget it! If you forgot your passphrase, there is no way to recover it and you can never decrypt all messages that has been encrypted with your pulic key.</p>
+<p>Now, enter a long passphrass, but don&rsquo;t forget it! If you forgot your passphrase, there is no way to recover it and you can never decrypt all messages that has been encrypted with your pulic key. Consider using a good password manager to store your complicated passphrase.</p>
 
 <p>Now that you have your own private and public keys, you should share your public key to everyone! To print your public key, use this command (replace my email address with yours):</p>
 
@@ -202,7 +206,7 @@ gpg -a --export arif@sainsmograf.com
 
 <p>And the result:</p>
 
-<p>```
+<p>``` text My Public Key
 &mdash;&mdash;-BEGIN PGP PUBLIC KEY BLOCK&mdash;&mdash;&ndash;
 Version: GnuPG v1.4.13 (Darwin)</p>
 
@@ -273,7 +277,7 @@ gpg -a -e -u sender@example.com -r recipient@example.com plain.txt
 
 <p>The encrypted message would be stored inside <code>plain.txt.asc</code> file:</p>
 
-<p>```
+<p>``` text Encrypted Message
 &mdash;&mdash;-BEGIN PGP MESSAGE&mdash;&mdash;&ndash;
 Version: GnuPG v1.4.13 (Darwin)</p>
 

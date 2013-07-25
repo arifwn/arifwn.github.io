@@ -172,9 +172,9 @@
 
 <h3>Simple Mail Transfer Protocol</h3>
 
-<p>The protocol used by email servers exchange email to each other. In fact, OSX and most linux distibutions ship with <code>sendmail</code>, an email transport agent. If you&rsquo;re on a Mac or Linux, open a terminal and type the following code to send yourself an email (replace my email address with yours):</p>
+<p>The SMTP (Simple Mail Transfer Protocol) is used by email servers to exchange emails to each other. In fact, OSX and most linux distributions ship with <code>sendmail</code>, an email transport agent. If you&rsquo;re on a Mac or Linux, open a terminal and type the following code to send yourself an email (replace my email address with yours):</p>
 
-<figure class='code'><figcaption><span>Send an email from command line interface using unix sendmail</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>Sending an Email From Command Line Interface Using Unix Sendmail</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>sendmail arif@sainsmograf.com <span class="s">&lt;&lt; EOF</span>
@@ -183,7 +183,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#x61;&#x72;&#x69;&#x66;&#64;&#x61;&#x72;&#105;&#x66;&#115;&#45;&#109;&#97;&#99;&#x62;&#x6f;&#x6f;&#x6b;&#x2d;&#x70;&#114;&#x6f;&#x2e;&#x6c;&#x6f;&#99;&#97;&#108;">&#97;&#x72;&#105;&#x66;&#x40;&#x61;&#114;&#x69;&#102;&#115;&#x2d;&#109;&#97;&#x63;&#98;&#111;&#111;&#x6b;&#x2d;&#x70;&#114;&#111;&#x2e;&#108;&#111;&#99;&#97;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#x6d;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#97;&#114;&#105;&#x66;&#64;&#x61;&#x72;&#105;&#x66;&#x73;&#45;&#x6d;&#97;&#99;&#98;&#x6f;&#111;&#107;&#45;&#112;&#x72;&#111;&#x2e;&#108;&#x6f;&#99;&#x61;&#108;">&#97;&#x72;&#x69;&#102;&#x40;&#97;&#x72;&#105;&#x66;&#x73;&#45;&#109;&#97;&#99;&#98;&#111;&#111;&#107;&#45;&#112;&#114;&#111;&#x2e;&#x6c;&#111;&#99;&#x61;&#108;</a>). If the command run successfully but you never receive any email, chance that:</p>
 
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
@@ -191,15 +191,19 @@
 </ul>
 
 
+<p>If you did receive the email, you might not be able to reply to it unless you have configured your hostname properly.</p>
+
+<p>In the above example, my computer act as an email server and communicate directly to sainsmograf.com&rsquo;s mail server. Note the <em>email server</em> part. If you&rsquo;re using Outlook or Thunderbird to connect to smtp server, your computer act as a <em>user</em> of that server. Here, <code>sendmail</code> act as an email server delivering email from its user (me) to another email server (sainsmograf.com).</p>
+
 <h3>Can Somebody Snoop My Email?</h3>
 
-<p>By default, <code>sendmail</code> uses unencrypted protocol. The email sent using the <code>sendmail</code> command in the previous section is not encrypted, and anybody between you and your destination server can easily read your email. The good news is, sendmail does support SSL and can encrypt your email messages when transmitting it to the destination server. However, sendmail&rsquo;s SSL encryption won&rsquo;t protect your email if the recipient access his mailbox via unencrypted connection (for example, plain old POP3 without SSL).</p>
+<p>By default, <code>sendmail</code> uses unencrypted protocol. The email sent using the <code>sendmail</code> command in the previous section is not encrypted, and anybody between you and your destination server can easily read your email. The good news is, sendmail does support SSL and can encrypt your email messages during transmission. However, sendmail&rsquo;s SSL encryption won&rsquo;t protect your email if the recipient access his mailbox via unencrypted connection (for example, plain old POP3 without SSL).</p>
 
 <p>You may need to encrypt your email message yourself to guarantee that nobody snoop your email, but how?</p>
 
 <h3>Pretty Good Privacy (PGP)</h3>
 
-<p>A popular way to encrypt your email messages is using PGP. A widely used implementation of PGP is GNU Privacy Guard (GnuPG, or GPG). If somebody asks you to use PGP/GPG, don&rsquo;t be confused. What he means is you should use GnuPG to exchange PGP-encrypted message with him.</p>
+<p>A popular way to encrypt your email messages is using PGP. A widely used implementation of PGP is GNU Privacy Guard (GnuPG, or GPG). <a href="http://www.wired.com/threatlevel/2013/06/signed-bda0df3c/">If somebody asks you to use PGP/GPG</a>, don&rsquo;t be confused. What he means is you should use GnuPG to exchange PGP-encrypted message with him.</p>
 
 <p>After getting GPG installed, lets use it to encrypt our email!</p>
 
@@ -214,7 +218,7 @@
 
 <p>You&rsquo;ll see the following output:</p>
 
-<figure class='code'><figcaption><span>Generate Private/Public Keys Pair</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>GPG Output</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -224,22 +228,22 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>pg <span class="o">(</span>GnuPG<span class="o">)</span> 1.4.13; Copyright <span class="o">(</span>C<span class="o">)</span> 2012 Free Software Foundation, Inc.
+</pre></td><td class='code'><pre><code class='text'><span class='line'>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
 </span><span class='line'>This is free software: you are free to change and redistribute it.
 </span><span class='line'>There is NO WARRANTY, to the extent permitted by law.
 </span><span class='line'>
-</span><span class='line'>Please <span class="k">select </span>what kind of key you want:
-</span><span class='line'>   <span class="o">(</span>1<span class="o">)</span> RSA and RSA <span class="o">(</span>default<span class="o">)</span>
-</span><span class='line'>   <span class="o">(</span>2<span class="o">)</span> DSA and Elgamal
-</span><span class='line'>   <span class="o">(</span>3<span class="o">)</span> DSA <span class="o">(</span>sign only<span class="o">)</span>
-</span><span class='line'>   <span class="o">(</span>4<span class="o">)</span> RSA <span class="o">(</span>sign only<span class="o">)</span>
+</span><span class='line'>Please select what kind of key you want:
+</span><span class='line'>   (1) RSA and RSA (default)
+</span><span class='line'>   (2) DSA and Elgamal
+</span><span class='line'>   (3) DSA (sign only)
+</span><span class='line'>   (4) RSA (sign only)
 </span><span class='line'>Your selection?
 </span></code></pre></td></tr></table></div></figure>
 
 
 <p>Select the default by entering <code>1</code>. You&rsquo;ll be prompted another questions. Just answer them accordingly. Eventually, GPG will ask you to create a passphrase:</p>
 
-<figure class='code'><figcaption><span>Generate Private/Public Keys Pair</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>GPG Output</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -274,45 +278,45 @@
 <span class='line-number'>33</span>
 <span class='line-number'>34</span>
 <span class='line-number'>35</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gpg <span class="o">(</span>GnuPG<span class="o">)</span> 1.4.13; Copyright <span class="o">(</span>C<span class="o">)</span> 2012 Free Software Foundation, Inc.
+</pre></td><td class='code'><pre><code class='text'><span class='line'>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
 </span><span class='line'>This is free software: you are free to change and redistribute it.
 </span><span class='line'>There is NO WARRANTY, to the extent permitted by law.
 </span><span class='line'>
-</span><span class='line'>Please <span class="k">select </span>what kind of key you want:
-</span><span class='line'>   <span class="o">(</span>1<span class="o">)</span> RSA and RSA <span class="o">(</span>default<span class="o">)</span>
-</span><span class='line'>   <span class="o">(</span>2<span class="o">)</span> DSA and Elgamal
-</span><span class='line'>   <span class="o">(</span>3<span class="o">)</span> DSA <span class="o">(</span>sign only<span class="o">)</span>
-</span><span class='line'>   <span class="o">(</span>4<span class="o">)</span> RSA <span class="o">(</span>sign only<span class="o">)</span>
+</span><span class='line'>Please select what kind of key you want:
+</span><span class='line'>   (1) RSA and RSA (default)
+</span><span class='line'>   (2) DSA and Elgamal
+</span><span class='line'>   (3) DSA (sign only)
+</span><span class='line'>   (4) RSA (sign only)
 </span><span class='line'>Your selection? 1
 </span><span class='line'>RSA keys may be between 1024 and 4096 bits long.
-</span><span class='line'>What keysize <span class="k">do </span>you want? <span class="o">(</span>2048<span class="o">)</span> 4096
+</span><span class='line'>What keysize do you want? (2048) 4096
 </span><span class='line'>Requested keysize is 4096 bits
 </span><span class='line'>Please specify how long the key should be valid.
-</span><span class='line'>         <span class="nv">0</span> <span class="o">=</span> key does not expire
-</span><span class='line'>      &lt;n&gt;  <span class="o">=</span> key expires in n days
-</span><span class='line'>      &lt;n&gt;w <span class="o">=</span> key expires in n weeks
-</span><span class='line'>      &lt;n&gt;m <span class="o">=</span> key expires in n months
-</span><span class='line'>      &lt;n&gt;y <span class="o">=</span> key expires in n years
-</span><span class='line'>Key is valid <span class="k">for</span>? <span class="o">(</span>0<span class="o">)</span>
+</span><span class='line'>         0 = key does not expire
+</span><span class='line'>      &lt;n&gt;  = key expires in n days
+</span><span class='line'>      &lt;n&gt;w = key expires in n weeks
+</span><span class='line'>      &lt;n&gt;m = key expires in n months
+</span><span class='line'>      &lt;n&gt;y = key expires in n years
+</span><span class='line'>Key is valid for? (0)
 </span><span class='line'>Key does not expire at all
-</span><span class='line'>Is this correct? <span class="o">(</span>y/N<span class="o">)</span> y
+</span><span class='line'>Is this correct? (y/N) y
 </span><span class='line'>
 </span><span class='line'>You need a user ID to identify your key; the software constructs the user ID
 </span><span class='line'>from the Real Name, Comment and Email Address in this form:
-</span><span class='line'>    <span class="s2">&quot;Heinrich Heine (Der Dichter) &lt;heinrichh@duesseldorf.de&gt;&quot;</span>
+</span><span class='line'>    &quot;Heinrich Heine (Der Dichter) &lt;heinrichh@duesseldorf.de&gt;&quot;
 </span><span class='line'>
 </span><span class='line'>Real name: Arif Widi Nugroho
 </span><span class='line'>Email address: arif@sainsmograf.com
 </span><span class='line'>Comment:
 </span><span class='line'>You selected this USER-ID:
-</span><span class='line'>    <span class="s2">&quot;Arif Widi Nugroho &lt;arif@sainsmograf.com&gt;&quot;</span>
+</span><span class='line'>    &quot;Arif Widi Nugroho &lt;arif@sainsmograf.com&gt;&quot;
 </span><span class='line'>
-</span><span class='line'>Change <span class="o">(</span>N<span class="o">)</span>ame, <span class="o">(</span>C<span class="o">)</span>omment, <span class="o">(</span>E<span class="o">)</span>mail or <span class="o">(</span>O<span class="o">)</span>kay/<span class="o">(</span>Q<span class="o">)</span>uit? o
+</span><span class='line'>Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
 </span><span class='line'>You need a Passphrase to protect your secret key.
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Now, enter a long passphrass, but don&rsquo;t forget it! If you forgot your passphrase, there is no way to recover it and you can never decrypt all messages that has been encrypted with your pulic key.</p>
+<p>Now, enter a long passphrass, but don&rsquo;t forget it! If you forgot your passphrase, there is no way to recover it and you can never decrypt all messages that has been encrypted with your pulic key. Consider using a good password manager to store your complicated passphrase.</p>
 
 <p>Now that you have your own private and public keys, you should share your public key to everyone! To print your public key, use this command (replace my email address with yours):</p>
 
@@ -323,7 +327,7 @@
 
 <p>And the result:</p>
 
-<figure class='code'><figcaption><span>Print PGP Public Key</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>My Public Key</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -375,8 +379,8 @@
 <span class='line-number'>50</span>
 <span class='line-number'>51</span>
 <span class='line-number'>52</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>-----BEGIN PGP PUBLIC KEY BLOCK-----
-</span><span class='line'>Version: GnuPG v1.4.13 <span class="o">(</span>Darwin<span class="o">)</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>-----BEGIN PGP PUBLIC KEY BLOCK-----
+</span><span class='line'>Version: GnuPG v1.4.13 (Darwin)
 </span><span class='line'>
 </span><span class='line'>mQINBFHw6YUBEAC0hmxW63ESb+YwatEVTeSOTkHjYp7G2S2gjmItVOuZ+N8us59N
 </span><span class='line'>uMH1M1g71GNcztYIXzQIoKITiLxLfP0+mPf0j2vzuoYY9AAsQgsr0fYPTDvJUz2c
@@ -424,8 +428,8 @@
 </span><span class='line'>O/sirv7X3uL0FN6jnxSMrA/Qj9Vn5QkV+BFdMdOQ0xDdWrZZRoWgWoiNFRVraILM
 </span><span class='line'>FXSLslU/Zns4Qu1oEhpvzzT5wW5xkbPhaY+XuQ4Qfl+y/mcHCdQFPfwh+Y81n/Di
 </span><span class='line'>uMvB7IUohi8q5z0XUqoyMkP1MccMq4qzoMcSJzHAx3Nju/aBNzS03CTFXDVYIO0g
-</span><span class='line'><span class="nv">TN4ixRhleA</span><span class="o">==</span>
-</span><span class='line'><span class="o">=</span>dEg9
+</span><span class='line'>TN4ixRhleA==
+</span><span class='line'>=dEg9
 </span><span class='line'>-----END PGP PUBLIC KEY BLOCK-----
 </span></code></pre></td></tr></table></div></figure>
 
@@ -448,7 +452,7 @@
 
 <p>The encrypted message would be stored inside <code>plain.txt.asc</code> file:</p>
 
-<figure class='code'><figcaption><span>Encrypt a Message</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>Encrypted Message</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -466,8 +470,8 @@
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>-----BEGIN PGP MESSAGE-----
-</span><span class='line'>Version: GnuPG v1.4.13 <span class="o">(</span>Darwin<span class="o">)</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>-----BEGIN PGP MESSAGE-----
+</span><span class='line'>Version: GnuPG v1.4.13 (Darwin)
 </span><span class='line'>
 </span><span class='line'>hQIMA1wNV+AyV/2aAQ/8Dzd4h2MnY/ZNH2HO4aUUTGbgZfLWrWg1VJOKeldXw5GY
 </span><span class='line'>5FkAuywDfCMha9/GH3UHh9vLYjmCHsjf4BeMgA5Z5Z3Hzwp/+kI0Nv+N07L5+UVG
@@ -482,7 +486,7 @@
 </span><span class='line'>h1K2bpb4Syu2eeflgUxNdeLfjBmNJgMIGgsHMRspTAVqHo+KJzb1JanvuyVPCcPS
 </span><span class='line'>XAGb2WhILc/NRNKodV8LZsqBK6nxCCQM+3mooLUl5KoccG5VVealdf5epN7sbnjg
 </span><span class='line'>QlH+2rQjLwGGZH76bDBNhblC2M8tAUxU3BNUd/ax9EspN16IpHgWXNGNvUyh
-</span><span class='line'><span class="o">=</span>rJyP
+</span><span class='line'>=rJyP
 </span><span class='line'>-----END PGP MESSAGE-----
 </span></code></pre></td></tr></table></div></figure>
 
