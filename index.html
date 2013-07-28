@@ -183,7 +183,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#x6d;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#97;&#114;&#105;&#x66;&#64;&#x61;&#x72;&#105;&#x66;&#x73;&#45;&#x6d;&#97;&#99;&#98;&#x6f;&#111;&#107;&#45;&#112;&#x72;&#111;&#x2e;&#108;&#x6f;&#99;&#x61;&#108;">&#97;&#x72;&#x69;&#102;&#x40;&#97;&#x72;&#105;&#x66;&#x73;&#45;&#109;&#97;&#99;&#98;&#111;&#111;&#107;&#45;&#112;&#114;&#111;&#x2e;&#x6c;&#111;&#99;&#x61;&#108;</a>). If the command run successfully but you never receive any email, chance that:</p>
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#111;&#58;&#97;&#114;&#105;&#x66;&#x40;&#97;&#114;&#x69;&#x66;&#x73;&#45;&#109;&#97;&#x63;&#x62;&#x6f;&#x6f;&#107;&#x2d;&#112;&#x72;&#x6f;&#46;&#x6c;&#111;&#x63;&#x61;&#x6c;">&#x61;&#x72;&#105;&#x66;&#x40;&#97;&#114;&#105;&#x66;&#115;&#x2d;&#109;&#97;&#99;&#98;&#111;&#x6f;&#x6b;&#x2d;&#x70;&#114;&#x6f;&#x2e;&#x6c;&#111;&#x63;&#97;&#108;</a>). If the command run successfully but you never receive any email, chance that:</p>
 
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
@@ -205,7 +205,7 @@
 
 <p>A popular way to encrypt your email messages is using PGP. A widely used implementation of PGP is GNU Privacy Guard (GnuPG, or GPG). <a href="http://www.wired.com/threatlevel/2013/06/signed-bda0df3c/">If somebody asks you to use PGP/GPG</a>, don&rsquo;t be confused. What he means is you should use GnuPG to exchange PGP-encrypted message with him.</p>
 
-<p>After getting GPG installed, lets use it to encrypt our email!</p>
+<p>After getting GPG installed (<a href="https://gpgtools.org/">OSX</a>, <a href="https://help.ubuntu.com/community/GnuPrivacyGuardHowto">Linux</a>, <a href="http://gpg4win.org/">Windows</a>), lets use it to encrypt our email!</p>
 
 <h4>Generate Private/Public Keys Pair</h4>
 
@@ -523,6 +523,24 @@
 <ul>
 <li><a href="http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/">GPG Cheat Sheet</a></li>
 <li><a href="http://www.robertsosinski.com/2008/02/18/working-with-pgp-and-mac-os-x/">Working with PGP and Mac OS X</a></li>
+</ul>
+
+
+<p>That&rsquo;s just an overview of how PGP works. If you use an email client or install an email client plugin that support PGP, after creating your public/private keys pair, the process is mostly automatic. No need to go back and forth to the command line interface!</p>
+
+<p><img src="https://lh4.googleusercontent.com/-50Khh48XTNY/UfU1QpkjNWI/AAAAAAAAAD4/Ej3sEP0yAsI/w652-h418-no/OSX+Mail+App+%252B+GPGTools.png" title="Sending An Encrypted Email With OSX Mail App + GPGTools" ></p>
+
+<h3>S/MIME (Secure/Multipurpose Internet Mail Extensions)</h3>
+
+<p>Almost the same with PGP, except you don&rsquo;t generate your public/private keys pair yourself. Instead, you obtain them in the form of digital certificate from a certificate authority.</p>
+
+<p>When you send an email signed with S/MIME, your recipient will automatically get your public key. Also, if you obtain your certificate from trusted authority, such as VeriSign, your recipient&rsquo;s email client will automatically validate your message with no manual process involve. Also, unlike PGP, most email clients support S/MIME.</p>
+
+<p>Simply obtain a certificate from a trusted certificate authority, install it, and ready to go! The drawback is you need to pay to get a certificate. <a href="http://www.symantec.com/verisign/digital-id?tid=gnps">You can get a certificate with one year validity from VeriSign here (about $20)</a>.</p>
+
+<ul>
+<li><a href="http://arstechnica.com/apple/2011/10/secure-your-e-mail-under-mac-os-x-and-ios-5-with-smime/">S/MIME Guide</a></li>
+<li><a href="http://www.comodo.com/home/email-security/free-email-certificate.php">Free S/MIME Certificate &ndash; not trusted by many email clients</a></li>
 </ul>
 
 
