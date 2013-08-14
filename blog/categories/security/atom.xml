@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Security | Sainsmograf]]></title>
   <link href="http://arifwn.github.io/blog/categories/security/atom.xml" rel="self"/>
   <link href="http://arifwn.github.io/"/>
-  <updated>2013-07-28T22:17:26+07:00</updated>
+  <updated>2013-08-15T00:35:34+07:00</updated>
   <id>http://arifwn.github.io/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -58,6 +58,17 @@
 
 <p>Should we worry that an exploit to random number generator could compromise our security? Probably not, but keep it in mind though.</p>
 
+<p>Recently, <a href="http://forum.ovh.com/showthread.php?t=88277">a bitcoin exchange got hacked</a> because the attacker could take advantage of its dedicated server provider&rsquo;s password reset link. Apparently, the password reset link was not random enough and can be guessed by attacker.</p>
+
+<p>See also:</p>
+
+<ul>
+<li><a href="http://www.random.org/">random.org</a></li>
+<li><a href="http://www.matasano.com/articles/javascript-cryptography/">Javascript Cryptography Considered Harmful</a></li>
+<li><a href="http://www.slideshare.net/astamos/bh-slides">The Factoring Dead: Preparing for the Cryptopocalypse</a></li>
+</ul>
+
+
 <h3>Quantum Computing</h3>
 
 <p><a href="http://www.mat.ucm.es/catedramdeguzman/old/01historias/haciaelfuturo/Burgos090900/quantumcomputingSciAmer/0698gershenfeld.html">Quantum computing</a> has gain a lot of buzz recently, especially those <a href="http://en.wikipedia.org/wiki/D-Wave_Systems">D-Wave</a> stuff. But what is quantum computing and what is the implication for our daily (internet) life?</p>
@@ -102,7 +113,7 @@ Hello, just a test email from command line!
 EOF
 </code></p>
 
-<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#97;&#x72;&#x69;&#x66;&#64;&#97;&#114;&#x69;&#x66;&#115;&#x2d;&#x6d;&#97;&#x63;&#98;&#111;&#111;&#107;&#45;&#112;&#114;&#111;&#x2e;&#108;&#x6f;&#x63;&#x61;&#108;">&#97;&#114;&#105;&#x66;&#x40;&#x61;&#114;&#x69;&#x66;&#115;&#x2d;&#x6d;&#97;&#99;&#98;&#111;&#x6f;&#107;&#45;&#112;&#114;&#x6f;&#46;&#108;&#x6f;&#99;&#97;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#x6d;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#97;&#114;&#x69;&#x66;&#64;&#x61;&#114;&#105;&#x66;&#x73;&#45;&#x6d;&#97;&#x63;&#98;&#x6f;&#111;&#x6b;&#45;&#112;&#114;&#111;&#x2e;&#x6c;&#x6f;&#x63;&#97;&#x6c;">&#97;&#x72;&#105;&#102;&#x40;&#x61;&#114;&#x69;&#x66;&#115;&#x2d;&#109;&#x61;&#99;&#x62;&#x6f;&#x6f;&#x6b;&#45;&#112;&#114;&#111;&#46;&#x6c;&#111;&#x63;&#97;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
 
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
@@ -185,7 +196,7 @@ from the Real Name, Comment and Email Address in this form:</p>
 </code></pre>
 
 <p>Real name: Arif Widi Nugroho
-Email address: <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x61;&#x72;&#105;&#102;&#64;&#x73;&#x61;&#x69;&#x6e;&#115;&#x6d;&#111;&#x67;&#114;&#97;&#x66;&#46;&#x63;&#111;&#x6d;">&#x61;&#114;&#x69;&#102;&#x40;&#x73;&#x61;&#105;&#110;&#x73;&#x6d;&#x6f;&#103;&#x72;&#97;&#102;&#46;&#x63;&#111;&#109;</a>
+Email address: <a href="&#x6d;&#97;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#97;&#x72;&#x69;&#102;&#64;&#x73;&#x61;&#105;&#110;&#x73;&#x6d;&#x6f;&#x67;&#x72;&#x61;&#x66;&#x2e;&#99;&#x6f;&#109;">&#97;&#114;&#105;&#102;&#x40;&#x73;&#x61;&#105;&#110;&#115;&#109;&#x6f;&#x67;&#x72;&#x61;&#x66;&#x2e;&#99;&#x6f;&#x6d;</a>
 Comment:
 You selected this USER-ID:</p>
 
