@@ -4,7 +4,7 @@
   <title><![CDATA[Sainsmograf]]></title>
   <link href="http://arifwn.github.io/atom.xml" rel="self"/>
   <link href="http://arifwn.github.io/"/>
-  <updated>2013-08-15T00:35:34+07:00</updated>
+  <updated>2013-08-22T09:11:15+07:00</updated>
   <id>http://arifwn.github.io/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -116,7 +116,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#111;&#58;&#x61;&#114;&#x69;&#102;&#x40;&#x61;&#114;&#x69;&#x66;&#x73;&#45;&#x6d;&#97;&#99;&#x62;&#x6f;&#111;&#x6b;&#45;&#x70;&#114;&#111;&#x2e;&#x6c;&#111;&#99;&#97;&#x6c;">&#97;&#x72;&#x69;&#x66;&#x40;&#97;&#x72;&#105;&#102;&#115;&#x2d;&#x6d;&#x61;&#x63;&#98;&#x6f;&#111;&#107;&#45;&#112;&#x72;&#111;&#x2e;&#x6c;&#x6f;&#99;&#97;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#x61;&#105;&#108;&#x74;&#111;&#58;&#x61;&#114;&#105;&#x66;&#x40;&#x61;&#x72;&#x69;&#x66;&#x73;&#x2d;&#109;&#97;&#99;&#98;&#x6f;&#x6f;&#107;&#45;&#112;&#114;&#x6f;&#46;&#x6c;&#x6f;&#x63;&#x61;&#x6c;">&#97;&#x72;&#105;&#102;&#64;&#97;&#x72;&#x69;&#x66;&#115;&#45;&#x6d;&#x61;&#99;&#x62;&#111;&#111;&#x6b;&#x2d;&#x70;&#x72;&#x6f;&#x2e;&#x6c;&#111;&#x63;&#x61;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
 
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
