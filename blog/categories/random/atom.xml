@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Random | Sainsmograf]]></title>
-  <link href="http://arifwn.github.io/blog/categories/random/atom.xml" rel="self"/>
-  <link href="http://arifwn.github.io/"/>
-  <updated>2013-08-22T11:24:23+07:00</updated>
-  <id>http://arifwn.github.io/</id>
+  <link href="http://www.sainsmograf.com/blog/categories/random/atom.xml" rel="self"/>
+  <link href="http://www.sainsmograf.com/"/>
+  <updated>2013-08-30T11:46:58+07:00</updated>
+  <id>http://www.sainsmograf.com/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Hello World]]></title>
-    <link href="http://arifwn.github.io/blog/2013/07/15/hello-world/"/>
+    <link href="http://www.sainsmograf.com/blog/2013/07/15/hello-world/"/>
     <updated>2013-07-15T19:46:00+07:00</updated>
-    <id>http://arifwn.github.io/blog/2013/07/15/hello-world</id>
+    <id>http://www.sainsmograf.com/blog/2013/07/15/hello-world</id>
     <content type="html"><![CDATA[<p>First Post!</p>
 ]]></content>
   </entry>

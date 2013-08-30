@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Security | Sainsmograf]]></title>
-  <link href="http://arifwn.github.io/blog/categories/security/atom.xml" rel="self"/>
-  <link href="http://arifwn.github.io/"/>
-  <updated>2013-08-22T11:24:23+07:00</updated>
-  <id>http://arifwn.github.io/</id>
+  <link href="http://www.sainsmograf.com/blog/categories/security/atom.xml" rel="self"/>
+  <link href="http://www.sainsmograf.com/"/>
+  <updated>2013-08-30T11:46:58+07:00</updated>
+  <id>http://www.sainsmograf.com/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Cryptography Primer]]></title>
-    <link href="http://arifwn.github.io/blog/2013/07/15/encryption-primer/"/>
+    <link href="http://www.sainsmograf.com/blog/2013/07/15/encryption-primer/"/>
     <updated>2013-07-15T20:37:00+07:00</updated>
-    <id>http://arifwn.github.io/blog/2013/07/15/encryption-primer</id>
+    <id>http://www.sainsmograf.com/blog/2013/07/15/encryption-primer</id>
     <content type="html"><![CDATA[<p>The uproar caused by recent leak from <a href="https://en.wikipedia.org/wiki/Edward_Snowden">Edward Snowden</a> still hasn&rsquo;t receded yet. There are various stances about privacy and government snooping floating around in the internet. Some say they have <a href="https://twitter.com/_nothingtohide">nothing to hide</a>. Others argue if the government can snoop you, and black-hat hackers can snoop the government, then we&rsquo;re royally screwed because anybody with money can pay the black-hats (or, gasp!, pay some corrupt government officials) to get data about anybody.</p>
 
 <p>Politics aside, security must be taken seriously everytime we use internet. In this post I would like to talk about the basic of security in general computing today.</p>
@@ -113,7 +113,7 @@ Hello, just a test email from command line!
 EOF
 </code></p>
 
-<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#x6d;&#97;&#105;&#x6c;&#116;&#x6f;&#58;&#97;&#x72;&#x69;&#102;&#64;&#x61;&#x72;&#x69;&#102;&#x73;&#45;&#109;&#x61;&#x63;&#x62;&#111;&#x6f;&#x6b;&#x2d;&#x70;&#114;&#111;&#46;&#108;&#x6f;&#99;&#x61;&#108;">&#97;&#114;&#105;&#102;&#x40;&#97;&#114;&#x69;&#x66;&#115;&#45;&#x6d;&#x61;&#x63;&#x62;&#111;&#111;&#107;&#x2d;&#x70;&#x72;&#111;&#46;&#x6c;&#111;&#99;&#97;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#97;&#x72;&#105;&#102;&#x40;&#97;&#114;&#105;&#x66;&#115;&#x2d;&#109;&#97;&#99;&#98;&#x6f;&#x6f;&#107;&#45;&#x70;&#x72;&#x6f;&#x2e;&#108;&#x6f;&#99;&#97;&#108;">&#97;&#x72;&#105;&#102;&#x40;&#97;&#114;&#105;&#102;&#x73;&#x2d;&#109;&#x61;&#99;&#98;&#x6f;&#111;&#x6b;&#x2d;&#x70;&#x72;&#x6f;&#46;&#x6c;&#111;&#x63;&#x61;&#108;</a>). If the command run successfully but you never receive any email, chance that:</p>
 
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
@@ -196,7 +196,7 @@ from the Real Name, Comment and Email Address in this form:</p>
 </code></pre>
 
 <p>Real name: Arif Widi Nugroho
-Email address: <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#97;&#x72;&#105;&#102;&#64;&#115;&#97;&#x69;&#x6e;&#x73;&#109;&#x6f;&#x67;&#114;&#97;&#102;&#x2e;&#99;&#x6f;&#x6d;">&#97;&#x72;&#x69;&#x66;&#64;&#115;&#97;&#x69;&#x6e;&#115;&#109;&#x6f;&#x67;&#114;&#x61;&#102;&#46;&#99;&#x6f;&#x6d;</a>
+Email address: <a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#58;&#97;&#x72;&#105;&#x66;&#x40;&#x73;&#97;&#x69;&#110;&#115;&#109;&#111;&#103;&#x72;&#x61;&#x66;&#46;&#99;&#111;&#x6d;">&#x61;&#x72;&#x69;&#x66;&#x40;&#x73;&#x61;&#x69;&#110;&#115;&#x6d;&#x6f;&#x67;&#114;&#97;&#102;&#x2e;&#99;&#111;&#109;</a>
 Comment:
 You selected this USER-ID:</p>
 
