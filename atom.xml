@@ -4,7 +4,7 @@
   <title><![CDATA[Sainsmograf]]></title>
   <link href="http://www.sainsmograf.com/atom.xml" rel="self"/>
   <link href="http://www.sainsmograf.com/"/>
-  <updated>2013-09-14T16:50:26+07:00</updated>
+  <updated>2014-01-04T15:35:50+07:00</updated>
   <id>http://www.sainsmograf.com/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -21,6 +21,11 @@
     <content type="html"><![CDATA[<p>The uproar caused by recent leak from <a href="https://en.wikipedia.org/wiki/Edward_Snowden">Edward Snowden</a> still hasn&rsquo;t receded yet. There are various stances about privacy and government snooping floating around in the internet. Some say they have <a href="https://twitter.com/_nothingtohide">nothing to hide</a>. Others argue if the government can snoop you, and black-hat hackers can snoop the government, then we&rsquo;re royally screwed because anybody with money can pay the black-hats (or, gasp!, pay some corrupt government officials) to get data about anybody.</p>
 
 <p>Politics aside, security must be taken seriously everytime we use internet. In this post I would like to talk about the basic of security in general computing today.</p>
+
+<ul>
+<li><a href="http://xkcd.com/1269/">http://xkcd.com/1269/</a></li>
+</ul>
+
 
 <h2>Basic Cryptography</h2>
 
@@ -132,7 +137,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#x6f;&#58;&#97;&#114;&#x69;&#102;&#x40;&#97;&#x72;&#x69;&#102;&#x73;&#x2d;&#109;&#97;&#99;&#x62;&#x6f;&#111;&#x6b;&#x2d;&#x70;&#x72;&#x6f;&#46;&#x6c;&#111;&#99;&#97;&#108;">&#97;&#114;&#x69;&#102;&#64;&#97;&#x72;&#x69;&#102;&#115;&#45;&#109;&#x61;&#x63;&#98;&#x6f;&#x6f;&#x6b;&#x2d;&#112;&#114;&#111;&#x2e;&#x6c;&#x6f;&#x63;&#x61;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x61;&#x72;&#x69;&#102;&#64;&#x61;&#114;&#105;&#x66;&#x73;&#45;&#109;&#97;&#x63;&#98;&#x6f;&#x6f;&#x6b;&#x2d;&#x70;&#114;&#111;&#46;&#108;&#111;&#x63;&#x61;&#x6c;">&#97;&#114;&#105;&#x66;&#64;&#97;&#x72;&#105;&#x66;&#x73;&#x2d;&#109;&#97;&#x63;&#98;&#111;&#111;&#107;&#x2d;&#x70;&#114;&#x6f;&#x2e;&#108;&#x6f;&#x63;&#97;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
 
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
@@ -510,6 +515,7 @@
 <ul>
 <li>Initial handshake uses asymmetric encryption to exchange symmetric keys. Therefore HTTPS requires two roundtrip to server. SPDY protocol solve this (but chrome-only).</li>
 <li>Validation: The connection might be encrypted, but how can you be sure that the guys on the other side of the cable are not an imposter? Someone I trusted should confirm that I&rsquo;m indeed not talking to a fake imposter.</li>
+<li><a href="https://community.qualys.com/blogs/securitylabs/2013/06/25/ssl-labs-deploying-forward-secrecy">Forward Secrecy</a></li>
 </ul>
 
 
