@@ -4,7 +4,7 @@
   <title><![CDATA[Sainsmograf]]></title>
   <link href="http://www.sainsmograf.com/atom.xml" rel="self"/>
   <link href="http://www.sainsmograf.com/"/>
-  <updated>2014-01-04T15:35:50+07:00</updated>
+  <updated>2015-06-06T06:26:06+07:00</updated>
   <id>http://www.sainsmograf.com/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -120,6 +120,10 @@
 
 <p>With a sufficiently big quantum computer, factoring private key from public key is feasible using Shor&rsquo;s algorithm. The task that could takes billions of years now can be accomplished in a couple years, for instance. That&rsquo;s why <a href="http://pqcrypto.org/">cryptography researchers now scramble to produce new cryptography algorithms and methods</a> in the event that quantum computer is finally big enough to pose a threat for cryptography world.</p>
 
+<h2>Forward Secrecy</h2>
+
+<p>Later</p>
+
 <h2>Securing Email</h2>
 
 <p>There is no doubt that email plays an important role in our internet life. We can&rsquo;t even register for a new account on many website without email! But how does email really work actually?</p>
@@ -137,7 +141,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x61;&#x72;&#x69;&#102;&#64;&#x61;&#114;&#105;&#x66;&#x73;&#45;&#109;&#97;&#x63;&#98;&#x6f;&#x6f;&#x6b;&#x2d;&#x70;&#114;&#111;&#46;&#108;&#111;&#x63;&#x61;&#x6c;">&#97;&#114;&#105;&#x66;&#64;&#97;&#x72;&#105;&#x66;&#x73;&#x2d;&#109;&#97;&#x63;&#98;&#111;&#111;&#107;&#x2d;&#x70;&#114;&#x6f;&#x2e;&#108;&#x6f;&#x63;&#97;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
+<p>Soon, you&rsquo;ll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#x3a;&#x61;&#x72;&#x69;&#x66;&#64;&#97;&#114;&#105;&#102;&#x73;&#45;&#109;&#x61;&#99;&#x62;&#x6f;&#111;&#107;&#45;&#112;&#x72;&#111;&#x2e;&#108;&#x6f;&#x63;&#97;&#108;">&#97;&#114;&#x69;&#x66;&#x40;&#x61;&#x72;&#x69;&#x66;&#x73;&#x2d;&#x6d;&#x61;&#99;&#x62;&#111;&#111;&#x6b;&#x2d;&#112;&#x72;&#x6f;&#46;&#x6c;&#x6f;&#x63;&#x61;&#x6c;</a>). If the command run successfully but you never receive any email, chance that:</p>
 
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
