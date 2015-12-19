@@ -4,7 +4,7 @@
   <title><![CDATA[Sainsmograf]]></title>
   <link href="http://www.sainsmograf.com/atom.xml" rel="self"/>
   <link href="http://www.sainsmograf.com/"/>
-  <updated>2015-12-19T01:28:17.654250</updated>
+  <updated>2015-12-19</updated>
   <id>http://www.sainsmograf.com/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -17,7 +17,7 @@
   <entry>
     <title type="html"><![CDATA[Cryptography Primer]]></title>
     <link href="http://www.sainsmograf.com/blog/2013/07/15/cryptography-primer/"/>
-    <updated>2013-07-15T20:37:00</updated>
+    <updated>2013-07-15</updated>
     <id>http://www.sainsmograf.com/blog/2013/07/15/cryptography-primer/</id>
     <content type="html"><![CDATA[
       <p>The uproar caused by recent leak from <a href="https://en.wikipedia.org/wiki/Edward_Snowden">Edward Snowden</a> still hasn't receded yet. There are various stances about privacy and government snooping floating around in the internet. Some say they have <a href="https://twitter.com/_nothingtohide">nothing to hide</a>. Others argue if the government can snoop you, and black-hat hackers can snoop the government, then we're royally screwed because anybody with money can pay the black-hats (or, gasp!, pay some corrupt government officials) to get data about anybody.</p>
@@ -446,7 +446,7 @@ This is a secret email!
   <entry>
     <title type="html"><![CDATA[Cryptography Primer]]></title>
     <link href="http://www.sainsmograf.com/blog/2013/07/15/hello-world/"/>
-    <updated>2013-07-15T19:46:00</updated>
+    <updated>2013-07-15</updated>
     <id>http://www.sainsmograf.com/blog/2013/07/15/hello-world/</id>
     <content type="html"><![CDATA[
       <p>First Post!</p>
