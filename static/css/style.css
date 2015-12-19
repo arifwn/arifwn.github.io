@@ -25,6 +25,11 @@ body {
   box-sizing: border-box;
 }
 
+.front-page .main-nav {
+  border-bottom: none;
+}
+
+
 .main-nav-absolute {
   position: absolute;
 }
@@ -38,6 +43,7 @@ body {
   width: 90%;
   margin-left: auto;
   margin-right: auto;
+  box-sizing: border-box;
 }
 
 .main-nav .logo {
@@ -76,7 +82,7 @@ body {
 @media screen and (max-width: 640px) {
 
 body {
-  padding: 70px 0 0 0;
+  padding: 69px 0 0 0;
 }
 
 .main-nav {
