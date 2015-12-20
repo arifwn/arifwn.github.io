@@ -239,13 +239,12 @@ article section p > img {
   text-decoration: none;
 }
 
-@media screen and (max-width: 900px) {
-  .front-page .parallax {
-    height: 450px;
-  }
+.parallax-window {
+  min-height: 400px;
+  background: transparent;
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 900px) {
   article {
     width: 100%;
   }
@@ -274,6 +273,13 @@ article section p > img {
     padding-left: 10px;
     padding-right: 10px;
   }
+
+  .front-page .parallax {
+    height: 450px;
+  }
+}
+
+@media screen and (max-width: 640px) {
 
   .front-page .parallax {
     height: 300px;

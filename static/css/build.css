@@ -99,24 +99,6 @@ green     #859900  operators, other keywords
 .codehilitetable .code .codehilite { width: 300px; }
 }
 
-.parallax {
-  position: relative;
-  overflow: hidden;
-}
-
-.full-width img {
-  width: 100%;
-  position: absolute;
-}
-
-.parallax-image-caption {
-  background: #333;
-  padding: 10px;
-  font-family: sans-serif;
-  font-size: 12px;
-  color: #dedede;
-}
-
 body {
   margin: 0;
   padding: 74px 0 0 0;
@@ -357,13 +339,12 @@ article section p > img {
   text-decoration: none;
 }
 
-@media screen and (max-width: 900px) {
-  .front-page .parallax {
-    height: 450px;
-  }
+.parallax-window {
+  min-height: 400px;
+  background: transparent;
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 900px) {
   article {
     width: 100%;
   }
@@ -392,6 +373,13 @@ article section p > img {
     padding-left: 10px;
     padding-right: 10px;
   }
+
+  .front-page .parallax {
+    height: 450px;
+  }
+}
+
+@media screen and (max-width: 640px) {
 
   .front-page .parallax {
     height: 300px;
