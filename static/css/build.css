@@ -261,9 +261,18 @@ article section p > img {
   margin-bottom: 40px;
 }
 
-.cover-image img {
+.cover-image.full-bleed {
+  width: 100%;
+  margin-top: 0;
+}
+
+.cover-image > img {
   display: block;
   width: 100%;
+}
+
+.cover-image > .parallax {
+  height: 400px;
 }
 
 .cover-image .cover-image-credit {
@@ -339,11 +348,6 @@ article section p > img {
   text-decoration: none;
 }
 
-.parallax-window {
-  min-height: 400px;
-  background: transparent;
-}
-
 @media screen and (max-width: 900px) {
   article {
     width: 100%;
@@ -377,6 +381,11 @@ article section p > img {
   .front-page .parallax {
     height: 450px;
   }
+
+  .cover-image > .parallax {
+    height: 300px;
+  }
+
 }
 
 @media screen and (max-width: 640px) {
@@ -385,4 +394,7 @@ article section p > img {
     height: 300px;
   }
 
+  .cover-image > .parallax {
+    height: 300px;
+  }
 }
