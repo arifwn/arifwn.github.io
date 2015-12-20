@@ -275,6 +275,25 @@ article section p > img {
   height: 500px;
 }
 
+.cover-image > .parallax h1 {
+  margin: 0;
+  padding-top: 50px;
+  text-align: center;
+  width: 100%;
+  font-size: 50px;
+  color: #333;
+  text-shadow: 0 0 10px white;
+}
+
+.cover-image > .parallax .meta {
+  margin: 0;
+  width: 100%;
+  font-size: 30px;
+  text-align: center;
+  color: #000;
+  text-shadow: 0 0 10px #fff;
+}
+
 .cover-image .cover-image-credit {
   text-align: center;
   font-size: 12px;
