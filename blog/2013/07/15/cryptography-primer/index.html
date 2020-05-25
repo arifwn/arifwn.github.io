@@ -7,7 +7,7 @@
   <link rel="canonical" href="http://www.sainsmograf.com/blog/2013/07/15/cryptography-primer/">
 
   
-  <link rel="stylesheet" type="text/css" href="/static/css/build.css?0e83a7c8">
+  <link rel="stylesheet" type="text/css" href="/static/css/build.css?9c7ed6bb">
   
 
   <link href="/static/img/favicon.png" rel="icon">
@@ -126,11 +126,11 @@
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="codehilite"><pre><span class="c"># Sending an Email From Command Line Interface Using Unix Sendmail</span>
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Sending an Email From Command Line Interface Using Unix Sendmail</span>
 sendmail arif@sainsmograf.com <span class="s">&lt;&lt; EOF</span>
 <span class="s">Hello, just a test email from command line!</span>
 <span class="s">EOF</span>
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>Soon, you'll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: arif@arifs-macbook-pro.local). If the command run successfully but you never receive any email, chance that:</p>
@@ -149,9 +149,9 @@ sendmail arif@sainsmograf.com <span class="s">&lt;&lt; EOF</span>
 <h4>Generate Private/Public Keys Pair</h4>
 <p>PGP uses asymmetric encryption (discussed above), so the first logical step to encrypt your email is generating your public and private keys. Run the following command from your terminal to generate your keys pair:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span class="c"># Generate Private/Public Keys Pair</span>
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Generate Private/Public Keys Pair</span>
 gpg --gen-key
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>You'll see the following output:</p>
@@ -164,7 +164,7 @@ gpg --gen-key
  7
  8
  9
-10</pre></div></td><td class="code"><div class="codehilite"><pre>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
+10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
@@ -174,7 +174,7 @@ Please select what kind of key you want:
    (3) DSA (sign only)
    (4) RSA (sign only)
 Your selection?
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>Select the default by entering <code>1</code>. You'll be prompted another questions. Just answer them accordingly. Eventually, GPG will ask you to create a passphrase:</p>
@@ -212,7 +212,7 @@ Your selection?
 32
 33
 34
-35</pre></div></td><td class="code"><div class="codehilite"><pre>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
+35</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
@@ -247,15 +247,15 @@ You selected this USER-ID:
 
 Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
 You need a Passphrase to protect your secret key.
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>Now, enter a long passphrass, but don't forget it! If you forgot your passphrase, there is no way to recover it and you can never decrypt all messages that has been encrypted with your pulic key. Consider using a good password manager to store your complicated passphrase.</p>
 <p>Now that you have your own private and public keys, you should share your public key to everyone! To print your public key, use this command (replace my email address with yours):</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span class="c"># Print PGP Public Key</span>
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Print PGP Public Key</span>
 gpg -a --export arif@sainsmograf.com
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>And the result:</p>
@@ -310,7 +310,7 @@ gpg -a --export arif@sainsmograf.com
 49
 50
 51
-52</pre></div></td><td class="code"><div class="codehilite"><pre>-----BEGIN PGP PUBLIC KEY BLOCK-----
+52</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.13 (Darwin)
 
 mQINBFHw6YUBEAC0hmxW63ESb+YwatEVTeSOTkHjYp7G2S2gjmItVOuZ+N8us59N
@@ -362,21 +362,21 @@ uMvB7IUohi8q5z0XUqoyMkP1MccMq4qzoMcSJzHAx3Nju/aBNzS03CTFXDVYIO0g
 TN4ixRhleA==
 =dEg9
 -----END PGP PUBLIC KEY BLOCK-----
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>There, you have my public key. Save that key into a file called <code>public.key</code> and import that public key using the following command:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span class="c"># Importing a Public Key</span>
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Importing a Public Key</span>
 gpg --import public.key
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>Now it's time to send myself a secret email! To encrypt a message, first, save the message inside a file called <code>plain.txt</code>. Encrypt the file using the following command: </p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span class="c"># Encrypt a Message</span>
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Encrypt a Message</span>
 gpg -a -e -u sender@example.com -r recipient@example.com plain.txt
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>Replace <code>sender@example.com</code> with your email message and <code>recipient@example.com</code> with your recipient. Make sure to import your recipient's public key first!</p>
@@ -400,7 +400,7 @@ gpg -a -e -u sender@example.com -r recipient@example.com plain.txt
 17
 18
 19
-20</pre></div></td><td class="code"><div class="codehilite"><pre># Encrypted Message
+20</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code># Encrypted Message
 
 -----BEGIN PGP MESSAGE-----
 Version: GnuPG v1.4.13 (Darwin)
@@ -420,31 +420,31 @@ XAGb2WhILc/NRNKodV8LZsqBK6nxCCQM+3mooLUl5KoccG5VVealdf5epN7sbnjg
 QlH+2rQjLwGGZH76bDBNhblC2M8tAUxU3BNUd/ax9EspN16IpHgWXNGNvUyh
 =rJyP
 -----END PGP MESSAGE-----
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>Now send that file via email to your recipient. Here is how to send the encrypted message using <code>sendmail</code>:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span class="c"># Send The Encrypted Message Using Sendmail</span>
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Send The Encrypted Message Using Sendmail</span>
 cat plain.txt.asc <span class="p">|</span> sendmail arif@sainsmograf.com
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p><img alt="An Encrypted Email!" src="https://lh6.googleusercontent.com/-OX554vlxHAA/UfD3nvJBfSI/AAAAAAAAACw/nRf9kju8m8c/d/Screen+Shot+2013-07-25+at+5.01.40+PM.png" title="An Encrypted Email!" /></p>
 <p>To decrypt the message, save the message content into a file called <code>cipher.txt</code> and run:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span class="c"># Decrypting a PGP Message</span>
+2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Decrypting a PGP Message</span>
 gpg -d cipher.txt
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>It would print out the decrypted message:</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
-3</pre></div></td><td class="code"><div class="codehilite"><pre>gpg: encrypted with 4096-bit RSA key, ID 3257FD9A, created 2013-07-25
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg: encrypted with 4096-bit RSA key, ID 3257FD9A, created 2013-07-25
       &quot;Arif Widi Nugroho &lt;arif@sainsmograf.com&gt;&quot;
 This is a secret email!
-</pre></div>
+</code></pre></div>
 </td></tr></table>
 
 <p>You can encrypt binary data too, or use it to encrypt your off-site backup data. Check the man page (<code>man gpg</code>) or consult the following resource:</p>
