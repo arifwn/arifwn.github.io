@@ -4,7 +4,7 @@
   <title><![CDATA[Sainsmograf]]></title>
   <link href="https://www.sainsmograf.com/atom.xml" rel="self"/>
   <link href="https://www.sainsmograf.com/"/>
-  <updated>2020-05-25T08:13:41.163770</updated>
+  <updated>2022-04-08T11:13:38.419075</updated>
   <id>https://www.sainsmograf.com/</id>
   <author>
     <name><![CDATA[Arif Widi Nugroho]]></name>
@@ -26,176 +26,174 @@
 <h2>Step 1: Automatically Dump All Databases into a Persistent Volume</h2>
 <p>I want to dump all databases inside a MySQL pod into a persistent volume. Each database will be dumped into a separate file (so I can load them individually as needed later) on a persistent volume which will be uploaded into a Backblaze B2 bucket later. I'll use Kubernetes' new <a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a> workload to schedule a daily database dump job.</p>
 <p>It's quite annoying to set this up over and over again, so I packed a small MySQL backup script into a container (<code>arifwn/container-backup:mysql</code>) suitable for use inside a Kubernetes' CronJob workload. This docker image can be used to backup a specific database or all databases. The source code is availabe on my github repo here: <a href="https://github.com/arifwn/container-backup">https://github.com/arifwn/container-backup</a>.</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">batch/v1beta1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CronJob</span>
-<span class="nt">metadata</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">backup-all-mysql80-db</span>
-    <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">backups</span>
-<span class="nt">spec</span><span class="p">:</span>
-    <span class="nt">concurrencyPolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Allow</span>
-    <span class="nt">failedJobsHistoryLimit</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-    <span class="nt">jobTemplate</span><span class="p">:</span>
-        <span class="nt">spec</span><span class="p">:</span>
-            <span class="nt">backoffLimit</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
-            <span class="nt">completions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-            <span class="nt">template</span><span class="p">:</span>
-                <span class="nt">spec</span><span class="p">:</span>
-                    <span class="nt">containers</span><span class="p">:</span>
-                    <span class="p p-Indicator">-</span> <span class="nt">env</span><span class="p">:</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DBNAME</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ALL</span> <span class="c1"># specify a specific database name here, or ALL to backup all databases</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">HOST</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql80.mysql.svc.cluster.local</span> <span class="c1"># your MySQL host</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">USER</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PASSWORD</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">absolutelysecret</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PORT</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="s">&quot;3306&quot;</span>
-                        <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:mysql</span>
-                        <span class="nt">imagePullPolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Always</span>
-                        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">backup-all-mysql80-db</span>
-                        <span class="nt">volumeMounts</span><span class="p">:</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">mountPath</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/dump</span>
-                            <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql80-backup-volume-all</span>
-                            <span class="l l-Scalar l-Scalar-Plain">subPath</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql80</span>
-                    <span class="nt">volumes</span><span class="p">:</span>
-                    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql80-backup-volume-all</span>
-                        <span class="l l-Scalar l-Scalar-Plain">persistentVolumeClaim</span><span class="p p-Indicator">:</span>
-                            <span class="nt">claimName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span>
-    <span class="nt">schedule</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0 2 * * *</span>
-    <span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1beta1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-all-mysql80-db</span><span class="w"></span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backups</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span><span class="w"></span>
+<span class="w">    </span><span class="nt">failedJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobTemplate</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
+<span class="w">            </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">            </span><span class="nt">template</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">containers</span><span class="p">:</span><span class="w"></span>
+<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DBNAME</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ALL</span><span class="w"> </span><span class="c1"># specify a specific database name here, or ALL to backup all databases</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HOST</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80.mysql.svc.cluster.local</span><span class="w"> </span><span class="c1"># your MySQL host</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USER</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PASSWORD</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolutelysecret</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;3306&quot;</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:mysql</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-all-mysql80-db</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dump</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80-backup-volume-all</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">subPath</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
+<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80-backup-volume-all</span><span class="w"></span>
+<span class="w">                        </span><span class="l l-Scalar l-Scalar-Plain">persistentVolumeClaim</span><span class="p p-Indicator">:</span><span class="w"></span>
+<span class="w">                            </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span><span class="w"></span>
+<span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0 2 * * *</span><span class="w"></span>
+<span class="w">    </span><span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
 </code></pre></div>
 </td></tr></table>
-
 <p>This will create a new CronJob workload entry on the Kubernetes cluster that run every 2:00 AM everyday. I also mounted a persistent volume (created beforehand) that will be used to store the resulting .sql dumps. We'll mount this volume in another CronJob entry to upload the content to Backblaze B2 later.</p>
 <h2>Step 2: Upload to a Backblaze B2 Bucket</h2>
 <p>Next is uploading the .sql files generated from the last step into a Backblaze B2 bucket. <a href="https://www.backblaze.com/b2/cloud-storage.html">Backblaze B2</a> is a (very) cheap cloud storage service (about $0.005/GB/Mo) from Backblaze with free ingress bandwidth cost, perfect for storing large backup data offsite. Egress is also cheap (about $0.01/GB) and very fast, unlike some other cheap cloud backup solution (e.g. AWS Glacier).</p>
 <p>I also packed my trusty B2 backup script into a docker image (<code>arifwn/container-backup:b2</code>). This image will compress each top-level folder in the mounted volume into a .tar.gz archive and upload it into the specified B2 bucket. The image will also perform daily cleanup on the target bucket so only the last 7 daily backups, the last 8 weekly backups, and the last 12 monthly backups retained. The source code is availabe on my github repo here: <a href="https://github.com/arifwn/container-backup">https://github.com/arifwn/container-backup</a>.</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">batch/v1beta1</span>
-<span class="nt">kind</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CronJob</span>
-<span class="nt">metadata</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">backblaze-backup</span>
-    <span class="nt">namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">backups</span>
-<span class="nt">spec</span><span class="p">:</span>
-    <span class="nt">concurrencyPolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Allow</span>
-    <span class="nt">failedJobsHistoryLimit</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-    <span class="nt">jobTemplate</span><span class="p">:</span>
-        <span class="nt">spec</span><span class="p">:</span>
-            <span class="nt">backoffLimit</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
-            <span class="nt">completions</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
-            <span class="nt">template</span><span class="p">:</span>
-                <span class="nt">spec</span><span class="p">:</span>
-                    <span class="nt">containers</span><span class="p">:</span>
-                    <span class="p p-Indicator">-</span> <span class="nt">env</span><span class="p">:</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">B2_ACCOUNT_ID</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">accountid</span> <span class="c1"># replace with your B2 account id</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">B2_API_KEY</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">secretkey</span> <span class="c1"># replace with your B2 API Key</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">BUCKET_NAME</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql-backup</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SOURCE_DIR</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/source/</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SYSTEM_NAME</span>
-                            <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">My Cluster</span>
-                        <span class="nt">image</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:b2</span>
-                        <span class="nt">imagePullPolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Always</span>
-                        <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">backblaze-backup</span>
-                        <span class="nt">resources</span><span class="p">:</span>
-                            <span class="nt">limits</span><span class="p">:</span>
-                                <span class="nt">cpu</span><span class="p">:</span> <span class="s">&quot;1&quot;</span> <span class="c1"># don&#39;t use too much cpu to avoid starving the node</span>
-                        <span class="nt">volumeMounts</span><span class="p">:</span>
-                        <span class="p p-Indicator">-</span> <span class="nt">mountPath</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/source</span>
-                            <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">source-data-volume</span>
-                    <span class="nt">dnsPolicy</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ClusterFirst</span>
-                    <span class="nt">volumes</span><span class="p">:</span>
-                    <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">source-data-volume</span>
-                        <span class="l l-Scalar l-Scalar-Plain">persistentVolumeClaim</span><span class="p p-Indicator">:</span>
-                            <span class="nt">claimName</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span>
-    <span class="nt">schedule</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">30 2 * * *</span>
-    <span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1beta1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backblaze-backup</span><span class="w"></span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backups</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span><span class="w"></span>
+<span class="w">    </span><span class="nt">failedJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">    </span><span class="nt">jobTemplate</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
+<span class="w">            </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">            </span><span class="nt">template</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">containers</span><span class="p">:</span><span class="w"></span>
+<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">B2_ACCOUNT_ID</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">accountid</span><span class="w"> </span><span class="c1"># replace with your B2 account id</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">B2_API_KEY</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secretkey</span><span class="w"> </span><span class="c1"># replace with your B2 API Key</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">BUCKET_NAME</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql-backup</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOURCE_DIR</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/source/</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SYSTEM_NAME</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My Cluster</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:b2</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backblaze-backup</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">resources</span><span class="p">:</span><span class="w"></span>
+<span class="w">                            </span><span class="nt">limits</span><span class="p">:</span><span class="w"></span>
+<span class="w">                                </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="c1"># don&#39;t use too much cpu to avoid starving the node</span><span class="w"></span>
+<span class="w">                        </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w"></span>
+<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/source</span><span class="w"></span>
+<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-data-volume</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">dnsPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterFirst</span><span class="w"></span>
+<span class="w">                    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
+<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-data-volume</span><span class="w"></span>
+<span class="w">                        </span><span class="l l-Scalar l-Scalar-Plain">persistentVolumeClaim</span><span class="p p-Indicator">:</span><span class="w"></span>
+<span class="w">                            </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span><span class="w"></span>
+<span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30 2 * * *</span><span class="w"></span>
+<span class="w">    </span><span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
 </code></pre></div>
 </td></tr></table>
-
 <p>This will create a new CronJob workload entry on the Kubernetes cluster that run every 2:30 AM everyday (plenty of time for the database dump cron to complete). The cron will compress all data found inside the mounted volume (each top-level folder will be compressed into a separate .tar.gz archive), upload them into a B2 bucket, and remove any old backup archives except the last 7 daily backups, the last 8 weekly backups, and the last 12 monthly backups.</p>
 <p>And that's it! The database is now backed up automatically every night to a B2 bucket. It only take minutes to setup and you can sleep soundly at night knowing your data is safe from random cluster failure. Don't forget to setup CronJob failure alert so you'll get notified when uploads failed (the B2 backup image will return with non-zero exit code on failure).</p>
     ]]></content>
@@ -315,16 +313,15 @@
 <p>There is no doubt that email plays an important role in our internet life. We can't even register for a new account on many website without email! But how does email really work actually?</p>
 <h3>Simple Mail Transfer Protocol</h3>
 <p>The SMTP (Simple Mail Transfer Protocol) is used by email servers to exchange emails to each other. In fact, OSX and most linux distributions ship with <code>sendmail</code>, an email transport agent. If you're on a Mac or Linux, open a terminal and type the following code to send yourself an email (replace my email address with yours):</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3
-4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Sending an Email From Command Line Interface Using Unix Sendmail</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Sending an Email From Command Line Interface Using Unix Sendmail</span>
 sendmail arif@sainsmograf.com <span class="s">&lt;&lt; EOF</span>
 <span class="s">Hello, just a test email from command line!</span>
 <span class="s">EOF</span>
 </code></pre></div>
 </td></tr></table>
-
 <p>Soon, you'll receive an email from <code>&lt;username&gt;@&lt;hostname&gt;</code> (example: arif@arifs-macbook-pro.local). If the command run successfully but you never receive any email, chance that:</p>
 <ul>
 <li>Your ISP block communication to port 25 to stop <a href="https://en.wikipedia.org/wiki/Spambot">spambots</a></li>
@@ -340,23 +337,22 @@ sendmail arif@sainsmograf.com <span class="s">&lt;&lt; EOF</span>
 <p>After getting GPG installed (<a href="https://gpgtools.org/">OSX</a>, <a href="https://help.ubuntu.com/community/GnuPrivacyGuardHowto">Linux</a>, <a href="http://gpg4win.org/">Windows</a>), lets use it to encrypt our email!</p>
 <h4>Generate Private/Public Keys Pair</h4>
 <p>PGP uses asymmetric encryption (discussed above), so the first logical step to encrypt your email is generating your public and private keys. Run the following command from your terminal to generate your keys pair:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Generate Private/Public Keys Pair</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Generate Private/Public Keys Pair</span>
 gpg --gen-key
 </code></pre></div>
 </td></tr></table>
-
 <p>You'll see the following output:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
@@ -368,43 +364,42 @@ Please select what kind of key you want:
 Your selection?
 </code></pre></div>
 </td></tr></table>
-
 <p>Select the default by entering <code>1</code>. You'll be prompted another questions. Just answer them accordingly. Eventually, GPG will ask you to create a passphrase:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg (GnuPG) 1.4.13; Copyright (C) 2012 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
@@ -441,68 +436,66 @@ Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? o
 You need a Passphrase to protect your secret key.
 </code></pre></div>
 </td></tr></table>
-
 <p>Now, enter a long passphrass, but don't forget it! If you forgot your passphrase, there is no way to recover it and you can never decrypt all messages that has been encrypted with your pulic key. Consider using a good password manager to store your complicated passphrase.</p>
 <p>Now that you have your own private and public keys, you should share your public key to everyone! To print your public key, use this command (replace my email address with yours):</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Print PGP Public Key</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Print PGP Public Key</span>
 gpg -a --export arif@sainsmograf.com
 </code></pre></div>
 </td></tr></table>
-
 <p>And the result:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>-----BEGIN PGP PUBLIC KEY BLOCK-----
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>-----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.13 (Darwin)
 
 mQINBFHw6YUBEAC0hmxW63ESb+YwatEVTeSOTkHjYp7G2S2gjmItVOuZ+N8us59N
@@ -556,43 +549,40 @@ TN4ixRhleA==
 -----END PGP PUBLIC KEY BLOCK-----
 </code></pre></div>
 </td></tr></table>
-
 <p>There, you have my public key. Save that key into a file called <code>public.key</code> and import that public key using the following command:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Importing a Public Key</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Importing a Public Key</span>
 gpg --import public.key
 </code></pre></div>
 </td></tr></table>
-
 <p>Now it's time to send myself a secret email! To encrypt a message, first, save the message inside a file called <code>plain.txt</code>. Encrypt the file using the following command: </p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Encrypt a Message</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Encrypt a Message</span>
 gpg -a -e -u sender@example.com -r recipient@example.com plain.txt
 </code></pre></div>
 </td></tr></table>
-
 <p>Replace <code>sender@example.com</code> with your email message and <code>recipient@example.com</code> with your recipient. Make sure to import your recipient's public key first!</p>
 <p>The encrypted message would be stored inside <code>plain.txt.asc</code> file:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code># Encrypted Message
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code># Encrypted Message
 
 -----BEGIN PGP MESSAGE-----
 Version: GnuPG v1.4.13 (Darwin)
@@ -614,31 +604,27 @@ QlH+2rQjLwGGZH76bDBNhblC2M8tAUxU3BNUd/ax9EspN16IpHgWXNGNvUyh
 -----END PGP MESSAGE-----
 </code></pre></div>
 </td></tr></table>
-
 <p>Now send that file via email to your recipient. Here is how to send the encrypted message using <code>sendmail</code>:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Send The Encrypted Message Using Sendmail</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Send The Encrypted Message Using Sendmail</span>
 cat plain.txt.asc <span class="p">|</span> sendmail arif@sainsmograf.com
 </code></pre></div>
 </td></tr></table>
-
 <p><img alt="An Encrypted Email!" src="https://lh6.googleusercontent.com/-OX554vlxHAA/UfD3nvJBfSI/AAAAAAAAACw/nRf9kju8m8c/d/Screen+Shot+2013-07-25+at+5.01.40+PM.png" title="An Encrypted Email!" /></p>
 <p>To decrypt the message, save the message content into a file called <code>cipher.txt</code> and run:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Decrypting a PGP Message</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="c1"># Decrypting a PGP Message</span>
 gpg -d cipher.txt
 </code></pre></div>
 </td></tr></table>
-
 <p>It would print out the decrypted message:</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2
-3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg: encrypted with 4096-bit RSA key, ID 3257FD9A, created 2013-07-25
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code>gpg: encrypted with 4096-bit RSA key, ID 3257FD9A, created 2013-07-25
       &quot;Arif Widi Nugroho &lt;arif@sainsmograf.com&gt;&quot;
 This is a secret email!
 </code></pre></div>
 </td></tr></table>
-
 <p>You can encrypt binary data too, or use it to encrypt your off-site backup data. Check the man page (<code>man gpg</code>) or consult the following resource:</p>
 <ul>
 <li><a href="http://irtfweb.ifa.hawaii.edu/~lockhart/gpg/">GPG Cheat Sheet</a></li>
