@@ -61,13 +61,13 @@
     
     
     <section>
-      <h1>Setting Up Automatic Daily Database Backup on Kubernetes</h1>
+      <h1>Setting Up Automatic Daily Database Backup on Kubernetes (Updated: 2024-03-03)</h1>
 <p>Kubernetes has been supporting <a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/">StatefulSets</a> for a while now, so it's a no brainer to deploy a database app in a Kubernetes cluster. Statefulset allows your pods to maintain sticky, persistent IDs, as well as persistent storage, making it ideal for database apps. Still, even with persistent storage, you should always configure automatic offsite backup when deploying a database app on a Kubernetes cluster. This would ensure your data survives any disaster that might befall your new shiny cluster.</p>
 <p>Automatic offsite backups can be a hassle, but it doesn't have to be. In this post, I'm going to setup an automatic daily backup on a MySQL pod into a Backblaze B2 bucket.</p>
 <h2>Step 1: Automatically Dump All Databases into a Persistent Volume</h2>
 <p>I want to dump all databases inside a MySQL pod into a persistent volume. Each database will be dumped into a separate file (so I can load them individually as needed later) on a persistent volume which will be uploaded into a Backblaze B2 bucket later. I'll use Kubernetes' new <a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a> workload to schedule a daily database dump job.</p>
 <p>It's quite annoying to set this up over and over again, so I packed a small MySQL backup script into a container (<code>arifwn/container-backup:mysql</code>) suitable for use inside a Kubernetes' CronJob workload. This docker image can be used to backup a specific database or all databases. The source code is availabe on my github repo here: <a href="https://github.com/arifwn/container-backup">https://github.com/arifwn/container-backup</a>.</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
 <span class="normal"> 4</span>
@@ -105,52 +105,219 @@
 <span class="normal">36</span>
 <span class="normal">37</span>
 <span class="normal">38</span>
-<span class="normal">39</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1beta1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-all-mysql80-db</span><span class="w"></span>
-<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backups</span><span class="w"></span>
-<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span><span class="w"></span>
-<span class="w">    </span><span class="nt">failedJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">jobTemplate</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-<span class="w">            </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">            </span><span class="nt">template</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">containers</span><span class="p">:</span><span class="w"></span>
-<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DBNAME</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ALL</span><span class="w"> </span><span class="c1"># specify a specific database name here, or ALL to backup all databases</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HOST</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80.mysql.svc.cluster.local</span><span class="w"> </span><span class="c1"># your MySQL host</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USER</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PASSWORD</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolutelysecret</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;3306&quot;</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:mysql</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-all-mysql80-db</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dump</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80-backup-volume-all</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">subPath</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
-<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80-backup-volume-all</span><span class="w"></span>
-<span class="w">                        </span><span class="l l-Scalar l-Scalar-Plain">persistentVolumeClaim</span><span class="p p-Indicator">:</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span><span class="w"></span>
-<span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0 2 * * *</span><span class="w"></span>
-<span class="w">    </span><span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-</code></pre></div>
-</td></tr></table>
-<p>This will create a new CronJob workload entry on the Kubernetes cluster that run every 2:00 AM everyday. I also mounted a persistent volume (created beforehand) that will be used to store the resulting .sql dumps. We'll mount this volume in another CronJob entry to upload the content to Backblaze B2 later.</p>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-all-mysql80-db</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backups</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Forbid</span>
+<span class="w">  </span><span class="nt">failedJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DBNAME</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ALL</span><span class="w"> </span><span class="c1"># specify a specific database name here, or ALL to backup all databases</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HOST</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80.mysql.svc.cluster.local</span><span class="w"> </span><span class="c1"># your MySQL host</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USER</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PASSWORD</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolutelysecret</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3306&quot;</span>
+<span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:mysql80</span>
+<span class="w">            </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-all-mysql80-db</span>
+<span class="w">            </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dump</span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80-backup-volume-all</span>
+<span class="w">              </span><span class="nt">subPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80</span>
+<span class="w">          </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql80-backup-volume-all</span>
+<span class="w">            </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0 2 * * *</span>
+<span class="w">  </span><span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</code></pre></div></td></tr></table></div>
+
+<p>This will create a new <code>CronJob</code> workload entry on the Kubernetes cluster that run every 2:00 AM everyday. I also mounted a persistent volume (created beforehand) that will be used to store the resulting <code>.sql</code> dumps. We'll mount this volume in another <code>CronJob</code> entry to upload the content to Backblaze B2 later.</p>
+<p>Using PostgreSQL? No problem!</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-all-postgres16-db</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backups</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Forbid</span>
+<span class="w">  </span><span class="nt">failedJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DBNAME</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ALL</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HOST</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres16.database.svc.cluster.local</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PASSWORD</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absolutelysecret</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;5432&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USER</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:postgresql-16</span>
+<span class="w">            </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-all-postgres16-db</span>
+<span class="w">            </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dump</span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres16-backup-volume-all</span>
+<span class="w">              </span><span class="nt">subPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres16</span>
+<span class="w">          </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres16-backup-volume-all</span>
+<span class="w">            </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0 2 * * *</span>
+<span class="w">  </span><span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</code></pre></div></td></tr></table></div>
+
 <h2>Step 2: Upload to a Backblaze B2 Bucket</h2>
-<p>Next is uploading the .sql files generated from the last step into a Backblaze B2 bucket. <a href="https://www.backblaze.com/b2/cloud-storage.html">Backblaze B2</a> is a (very) cheap cloud storage service (about $0.005/GB/Mo) from Backblaze with free ingress bandwidth cost, perfect for storing large backup data offsite. Egress is also cheap (about $0.01/GB) and very fast, unlike some other cheap cloud backup solution (e.g. AWS Glacier).</p>
-<p>I also packed my trusty B2 backup script into a docker image (<code>arifwn/container-backup:b2</code>). This image will compress each top-level folder in the mounted volume into a .tar.gz archive and upload it into the specified B2 bucket. The image will also perform daily cleanup on the target bucket so only the last 7 daily backups, the last 8 weekly backups, and the last 12 monthly backups retained. The source code is availabe on my github repo here: <a href="https://github.com/arifwn/container-backup">https://github.com/arifwn/container-backup</a>.</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<p>Next is uploading the <code>.sql</code> files generated from the last step into a Backblaze B2 bucket. <a href="https://www.backblaze.com/b2/cloud-storage.html">Backblaze B2</a> is a (very) cheap cloud storage service ($0.006/GB/Mo) from Backblaze with free ingress bandwidth cost, perfect for storing large backup data offsite. Egress is also cheap (free up to 3x monthly storage, then $0.01/GB) and very fast, unlike some other cheap cloud backup solution (e.g. AWS Glacier).</p>
+<p>I also packed my trusty B2 backup script into a docker image (<code>arifwn/container-backup:b2</code>). This image will compress each top-level folder in the mounted volume into a <code>.tar.gz</code> archive and upload it into the specified B2 bucket. The image will also perform daily cleanup on the target bucket so only the last 7 daily backups, the last 8 weekly backups, and the last 12 monthly backups retained. The source code is availabe on my github repo here: <a href="https://github.com/arifwn/container-backup">https://github.com/arifwn/container-backup</a>.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backblaze-backup</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backups</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Forbid</span>
+<span class="w">  </span><span class="nt">failedJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">B2_ACCOUNT_ID</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">accountid</span><span class="w"> </span><span class="c1"># replace with your B2 account id</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">B2_API_KEY</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secretkey</span><span class="w"> </span><span class="c1"># replace with your B2 API Key</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">BUCKET_NAME</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql-backup</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOURCE_DIR</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/source/</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SYSTEM_NAME</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My Cluster</span>
+<span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:b2</span>
+<span class="w">            </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backblaze-backup</span>
+<span class="w">            </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span><span class="w"> </span><span class="c1"># don&#39;t use too much cpu to avoid starving the node</span>
+<span class="w">            </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/source</span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-data-volume</span>
+<span class="w">          </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-data-volume</span>
+<span class="w">            </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30 2 * * *</span>
+<span class="w">  </span><span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</code></pre></div></td></tr></table></div>
+
+<p>This will create a new <code>CronJob</code> workload entry on the Kubernetes cluster that run every 2:30 AM everyday (plenty of time for the database dump cron to complete). The cron will compress all data found inside the mounted volume (each top-level folder will be compressed into a separate <code>.tar.gz</code> archive), upload them into a B2 bucket, and remove any old backup archives except the last 7 daily backups, the last 8 weekly backups, and the last 12 monthly backups.</p>
+<p>And that's it! The database is now backed up automatically every night to a B2 bucket. It only take minutes to setup and you can sleep soundly at night knowing your data is safe from random cluster failure. Don't forget to setup <code>CronJob</code> failure alert so you'll get notified when uploads failed (the B2 backup image will return with non-zero exit code on failure).</p>
+<h2>Step 3 (Optional): Upload to an Offsite Server with RSync</h2>
+<p>You can't have enough backup these days. While having copies of your data on B2 is great for your peace of mind, having yet another copy safely stored in another backup provider is great for redundancy. <a href="https://rsync.net/">RSync.net</a> is a great backup provider and supports automatic daily snapshots so you can go back in time to retrieve previous version of your file. All you need to do is generating a new ssh key and <a href="https://www.rsync.net/resources/howto/ssh_keys.html">upload them to your rsync.net server</a>, then use those keys on the config below.</p>
+<div class="codehilite"><table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
 <span class="normal"> 4</span>
@@ -191,52 +358,65 @@
 <span class="normal">39</span>
 <span class="normal">40</span>
 <span class="normal">41</span>
-<span class="normal">42</span></pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1beta1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backblaze-backup</span><span class="w"></span>
-<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backups</span><span class="w"></span>
-<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Allow</span><span class="w"></span>
-<span class="w">    </span><span class="nt">failedJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">jobTemplate</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-<span class="w">            </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">            </span><span class="nt">template</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">containers</span><span class="p">:</span><span class="w"></span>
-<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">B2_ACCOUNT_ID</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">accountid</span><span class="w"> </span><span class="c1"># replace with your B2 account id</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">B2_API_KEY</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secretkey</span><span class="w"> </span><span class="c1"># replace with your B2 API Key</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">BUCKET_NAME</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql-backup</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SOURCE_DIR</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/source/</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SYSTEM_NAME</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My Cluster</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:b2</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backblaze-backup</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">resources</span><span class="p">:</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">limits</span><span class="p">:</span><span class="w"></span>
-<span class="w">                                </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="w"> </span><span class="c1"># don&#39;t use too much cpu to avoid starving the node</span><span class="w"></span>
-<span class="w">                        </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w"></span>
-<span class="w">                        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/source</span><span class="w"></span>
-<span class="w">                            </span><span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-data-volume</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">dnsPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterFirst</span><span class="w"></span>
-<span class="w">                    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
-<span class="w">                    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-data-volume</span><span class="w"></span>
-<span class="w">                        </span><span class="l l-Scalar l-Scalar-Plain">persistentVolumeClaim</span><span class="p p-Indicator">:</span><span class="w"></span>
-<span class="w">                            </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span><span class="w"></span>
-<span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30 2 * * *</span><span class="w"></span>
-<span class="w">    </span><span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-</code></pre></div>
-</td></tr></table>
-<p>This will create a new CronJob workload entry on the Kubernetes cluster that run every 2:30 AM everyday (plenty of time for the database dump cron to complete). The cron will compress all data found inside the mounted volume (each top-level folder will be compressed into a separate .tar.gz archive), upload them into a B2 bucket, and remove any old backup archives except the last 7 daily backups, the last 8 weekly backups, and the last 12 monthly backups.</p>
-<p>And that's it! The database is now backed up automatically every night to a B2 bucket. It only take minutes to setup and you can sleep soundly at night knowing your data is safe from random cluster failure. Don't forget to setup CronJob failure alert so you'll get notified when uploads failed (the B2 backup image will return with non-zero exit code on failure).</p>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rsync-backup</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backups</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">concurrencyPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Forbid</span>
+<span class="w">  </span><span class="nt">failedJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">completions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TARGET</span>
+<span class="w">              </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">youraccount@yourhost.rsync.net:your-target-path# replace with your rsync.net account name</span>
+<span class="w">            </span><span class="nt">envFrom</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">configMapRef</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rsync-backup-base-env-config</span>
+<span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arifwn/container-backup:rsync</span>
+<span class="w">            </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;IfNotPresent&quot;</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rsync-backup</span>
+<span class="w">            </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100m&quot;</span><span class="w"> </span><span class="c1"># don&#39;t use too much cpu to avoid starving the node</span>
+<span class="w">            </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/source</span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-data-volume</span>
+<span class="w">          </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source-data-volume</span>
+<span class="w">            </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backup-storage-pv-claim</span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30 2 * * *</span>
+<span class="w">  </span><span class="nt">successfulJobsHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rsync-backup-base-env-config</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rsync-backup</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">PRIVATE_KEY</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">-----BEGIN RSA PRIVATE KEY-----</span>
+<span class="w">    </span><span class="no">Your SSH Private Key</span>
+<span class="w">    </span><span class="no">-----END RSA PRIVATE KEY-----</span>
+<span class="w">  </span><span class="nt">PUBLIC_KEY</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">Your SSH Public Key</span>
+</code></pre></div></td></tr></table></div>
+
+<p>Note that you don't have to use RSync.net, any host with ssh access will do.</p>
     </section>
 
   </article>
